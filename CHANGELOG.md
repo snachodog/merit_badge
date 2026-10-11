@@ -5,6 +5,18 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-11
+
+### Added
+- `sample.docker-compose.yaml` and `sample.env` for running the published image.
+- README section "Run from the published image" with a minimal and a robust compose file.
+- GitHub Actions release job: a `v*` tag builds the image, tags it `latest`, and creates a
+  GitHub release (pre-release while the version is 0.x).
+
+### Fixed
+- The Docker build workflow now builds the root `Dockerfile` and the `runtime` stage.
+- ntfy notifications are optional; the build no longer needs those secrets.
+
 ## [0.3.0] - 2026-10-11
 
 ### Added
