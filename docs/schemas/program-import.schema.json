@@ -159,6 +159,7 @@
         "source_status": {
           "enum": [
             "unverified",
+            "user_authored",
             "reviewed",
             "verified",
             "disputed"

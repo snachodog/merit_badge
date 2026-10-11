@@ -20,7 +20,7 @@
       {% for v, text_hit in award.version_rows %}
         <li><a href="{% url 'version_detail' v.pk %}">Version {{ v.version_label }}</a>
           <span class="badge">{{ v.get_status_display }}</span>
-          <span class="badge {% if v.source_status != 'verified' %}warn{% endif %}">Source: {{ v.get_source_status_display }}</span>
+          <span class="badge {% if v.source_status != 'verified' and v.source_status != 'user_authored' %}warn{% endif %}">Source: {{ v.get_source_status_display }}</span>
           <span class="badge">Rights: {{ v.get_rights_status_display }}</span>
           {% if text_hit %}<span class="badge">Matches requirement text</span>{% endif %}
         </li>

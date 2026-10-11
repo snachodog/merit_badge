@@ -17,7 +17,7 @@
   "version": {
     "label": "v1",
     "status": "draft",
-    "source_status": "unverified",
+    "source_status": "user_authored",
     "rights_status": "user_authored",
     "change_summary": "Example content for testing the importer."
   },

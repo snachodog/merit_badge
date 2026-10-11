@@ -141,6 +141,7 @@ class AwardVersion(TimestampedModel):
 
     class SourceStatus(models.TextChoices):
         UNVERIFIED = "unverified", "Unverified"
+        USER_AUTHORED = "user_authored", "User-authored"
         REVIEWED = "reviewed", "Reviewed"
         VERIFIED = "verified", "Verified"
         DISPUTED = "disputed", "Disputed"

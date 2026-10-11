@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-10
+
+
 ### Added
 - Phase 0 foundation: Django 5.2 project (`app/config`), PostgreSQL via environment
   variables, `/healthz` database check, login-required home page, login/logout,
@@ -31,3 +34,4 @@ All notable changes to this project are documented here. Format based on
 - JSON import: schema `docs/schemas/program-import.schema.json`, example file, dry-run report with
   error paths, import keys for repeat imports, drafts only, `import_program` command, and an upload page.
 - `ImportRecord` model and migration `requirements.0002`.
+- `user_authored` source status for content you write yourself, with its own banner text.
