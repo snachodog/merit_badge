@@ -1,0 +1,92 @@
+#  ~/.gitignore_global  (starter – adjust to taste)
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Editor / IDE
+.vscode/
+!.vscode/extensions.json  # This one is useful to share
+.idea/
+*.iml
+*.swp
+*.swo
+
+# Node / front-end builds
+node_modules/
+
+# Composer / PHP
+vendor/
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Java / Gradle / Maven
+.gradle/
+*.class
+*.jar
+*.war
+
+# Build output
+dist/
+build/
+out/
+target/
+*.compiled
+*.min.js
+*.min.css
+
+# Env & secrets
+.env
+.env.*
+.env.local
+.env.*.local
+# But always track the example file
+!.env.example
+
+# AWS
+.aws/credentials
+
+# Logs & temp
+*.log
+*.sqlite
+*.sql
+logs/
+*.tmp
+*.temp
+*.cache
+*.bak
+
+# Test & coverage
+coverage/
+.nyc_output/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Infrastructure / Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+override.tf
+override.tf.json
+
+# Images & archives generated locally
+*.zip
+*.png~
