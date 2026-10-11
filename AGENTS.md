@@ -71,4 +71,12 @@ A milestone is done only when:
 - If a decision is open in `PLAN.md` §18 and blocks safe progress, ask the owner. Otherwise pick the simplest reversible option and record it in an ADR under `docs/decisions/`.
 
 ## Plain language (ISO 24495-1)
-All text written for people follows ISO 24495-1 (see PLAN.md §2.6): docs, UI text, error messages, ADRs, commit messages, and every message to the project owner. Write for what the reader needs, make it easy to find, use short sentences and familiar words, and end with the next action or decision. Official requirement text is the exception: reproduce it exactly.
+All text written for people follows ISO 24495-1 (see PLAN.md §2.6): docs, UI text, error messages, ADRs, commit messages, and every message to the project owner. Working rules come from the community skill at https://github.com/GaZmagik/iso-24495 (MIT, `skills/iso-24495-1/SKILL.md`). Its numbers are its own proxies, not the standard's text, so following them is not a claim of ISO conformance.
+
+- **Lead with the answer.** No preamble or filler.
+- **Short sentences.** Aim for 15 to 20 words; never over 30. One idea each.
+- **Short paragraphs.** 3 to 5 sentences, one topic, main point first.
+- **Active voice, everyday words.** One term per concept. Say "you". State links with *because*, *if*, *before*, *after*.
+- **Easy to scan.** Single-topic headings; bullets for three or more items. Do not rely on bold or colour alone for meaning.
+- **Give the next action.** Exact commands, paths, and parameters.
+- **Exemptions.** Code, commands, logs, diffs, and quoted files stay unaltered. Official requirement text is reproduced exactly. Technical accuracy outranks style.

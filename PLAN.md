@@ -179,6 +179,8 @@ The four principles are that readers can:
 3. Understand what they find: short sentences, familiar words, defined terms, and one idea per paragraph.
 4. Use what they find: content supports the next action, such as a step, a decision, or a command to run.
 
+Practical writing rules are in `AGENTS.md`, drawn from the community skill at https://github.com/GaZmagik/iso-24495. Its numeric limits are the skill's own proxies, not the standard's text, and following them does not claim ISO conformance.
+
 Exceptions: authoritative requirement text is reproduced as written by its source (see Section 2.1) and is not rewritten. Plain-language explanation goes in the separate interpretation field. Code, schemas, and commands are shown as they are.
 
 ## 2.7 Honest evidence
