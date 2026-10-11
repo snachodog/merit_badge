@@ -1,5 +1,5 @@
 #!/bin/sh
-# Apply migrations, then exec the container command.
+# Apply migrations, create the first user if asked, then exec the container command.
 # Database readiness is ensured by compose (depends_on: service_healthy);
 # migrate also retries briefly to tolerate non-compose use.
 set -eu
@@ -15,6 +15,12 @@ if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
     echo "migrate failed; retrying in 3s ($tries/10)" >&2
     sleep 3
   done
+fi
+
+# Create the first user if both variables are set. Does nothing if the user exists.
+if [ -n "${BOOTSTRAP_ADMIN_USERNAME:-}" ] && [ -n "${BOOTSTRAP_ADMIN_PASSWORD:-}" ] \
+  && [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+  python manage.py bootstrap_admin || echo "bootstrap_admin failed; continuing" >&2
 fi
 
 exec "$@"

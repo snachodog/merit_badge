@@ -31,7 +31,11 @@ Set `POSTGRES_PASSWORD` before the first start: it is stored in the database vol
 ## First user (bootstrap)
 
 Public registration is disabled; accounts are created by an administrator.
-Create the first superuser with either method:
+The easy way: set `BOOTSTRAP_ADMIN_USERNAME` and `BOOTSTRAP_ADMIN_PASSWORD` in `.env`.
+The web container creates that user each time it starts, if the user does not exist yet.
+Remove the password from `.env` afterwards.
+
+You can also create the first superuser by hand with either method:
 
 ```sh
 # Interactive

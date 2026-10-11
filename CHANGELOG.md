@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+### Changed
+- The web container now runs `bootstrap_admin` at start when `BOOTSTRAP_ADMIN_USERNAME` and `BOOTSTRAP_ADMIN_PASSWORD` are set. Before, `.env` values alone created no user (issue #1).
+
 ### Fixed
 - `bootstrap_admin` now says when an existing user keeps its password, and has `--reset-password` to set a new one (issue #1).
 
