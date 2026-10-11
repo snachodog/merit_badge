@@ -387,9 +387,11 @@
         "evidence_expectations": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
           },
-          "description": "Accepted but not stored yet."
+          "description": "Short labels for the evidence a learner might record, such as \"photo of the finished model\". Guidance only. Stored with the requirement."
         },
         "constraints": {
           "type": "object",

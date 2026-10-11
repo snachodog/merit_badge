@@ -225,6 +225,7 @@ def create_revision(version, version_label=None, change_summary=""):
                 condition_expression=old.condition_expression,
                 estimated_effort=old.estimated_effort,
                 safety_notes=old.safety_notes,
+                evidence_expectations=list(old.evidence_expectations or []),
             )
         if len(remaining) == len(pending):  # unreachable parent: stop, do not loop forever
             raise WorkflowError("The requirement tree has a broken parent link.")

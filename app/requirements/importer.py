@@ -417,14 +417,15 @@ def _check_node(c, node, path, depth, parent_path, order, source_keys, specs, co
                     c.error(f"{path}.action_tags[{j}]", "This tag is listed twice.")
                 seen.add(tag)
 
-    if "evidence_expectations" in node or "constraints" in node:
-        c.report.warnings.append(
-            f"{path}: evidence_expectations and constraints are accepted but not stored yet."
-        )
-        ev = node.get("evidence_expectations")
-        if ev is not None and not (isinstance(ev, list) and all(isinstance(x, str) for x in ev)):
-            c.error(f"{path}.evidence_expectations", "Must be a list of text values.")
-        if "constraints" in node and not isinstance(node["constraints"], dict):
+    if "evidence_expectations" in node:
+        ev = node["evidence_expectations"]
+        if not (isinstance(ev, list) and all(isinstance(x, str) and x.strip() for x in ev)):
+            c.error(f"{path}.evidence_expectations", "Must be a list of non-empty text values.")
+        elif any(len(x) > 200 for x in ev):
+            c.error(f"{path}.evidence_expectations", "Each label must be 200 characters or fewer.")
+    if "constraints" in node:
+        c.report.warnings.append(f"{path}: constraints is accepted but not stored yet.")
+        if not isinstance(node["constraints"], dict):
             c.error(f"{path}.constraints", "Must be an object.")
 
     children = node.get("children", [])
@@ -585,6 +586,7 @@ def _create_nodes(version, items, parent, sources):
             condition_expression=item.get("condition_expression"),
             estimated_effort=item.get("estimated_effort", ""),
             safety_notes=item.get("safety_notes", ""),
+            evidence_expectations=[x.strip() for x in item.get("evidence_expectations", [])],
         )
         RequirementActionTag.objects.bulk_create(
             RequirementActionTag(node=node, tag=tag, reviewed=False)

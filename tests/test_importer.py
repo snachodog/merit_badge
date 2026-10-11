@@ -285,3 +285,22 @@ def test_upload_too_large(logged):
 def test_upload_requires_login(client):
     assert client.get(reverse("import_program")).status_code == 302
     assert client.post(reverse("import_program"), {"action": "commit"}).status_code == 302
+
+
+def test_evidence_expectations_are_stored_and_copied_to_revisions():
+    data = base()
+    data["requirements"][0]["evidence_expectations"] = ["dated journal entries", " photo "]
+    version = importer.commit_import(data)
+    node = RequirementNode.objects.get(award_version=version, display_number="1")
+    assert node.evidence_expectations == ["dated journal entries", "photo"]
+    services.submit_for_review(version)
+    services.publish_version(version)
+    rev = services.create_revision(version)
+    assert RequirementNode.objects.get(award_version=rev, display_number="1").evidence_expectations == [
+        "dated journal entries", "photo"]
+
+
+def test_evidence_expectations_must_be_text_list():
+    data = base()
+    data["requirements"][0]["evidence_expectations"] = "photo"
+    assert "requirements[0].evidence_expectations" in paths(importer.plan_import(data)[1])

@@ -33,6 +33,7 @@
       "text": "Keep an observing journal on at least four separate nights.",
       "text_origin": "user_provided",
       "action_tags": ["record", "log", "observe"],
+      "evidence_expectations": ["dated journal entries", "sketches or photos of what you saw"],
       "safety_notes": "Tell an adult where you are observing after dark."
     },
     {

@@ -134,6 +134,12 @@ class RequirementNode(TimestampedModel):
         max_length=200, blank=True, help_text="An estimate, not part of the requirement."
     )
     safety_notes = models.TextField(blank=True)
+    evidence_expectations = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Short labels for the kind of evidence this requirement suggests. "
+        "Guidance only. It does not change what the requirement asks for.",
+    )
 
     objects = RequirementNodeQuerySet.as_manager()
 
