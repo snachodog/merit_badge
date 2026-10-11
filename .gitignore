@@ -93,3 +93,6 @@ override.tf.json
 
 # Local backups
 backups/
+
+# Local-only requirement source material (internal testing)
+source_reqs/

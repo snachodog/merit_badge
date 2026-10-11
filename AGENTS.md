@@ -19,7 +19,8 @@ A self-hosted, single-user web app for working through requirement-based program
 - Browser-based website only. No native mobile or desktop apps.
 - Core features must work without an external AI API. No analytics, ads, telemetry, or social logins.
 - No public registration, profiles, feeds, leaderboards, marketplaces, or community features.
-- Do not invent, paraphrase as authoritative, or silently alter official requirements. Do not scrape or republish program content without confirmed rights.
+- Do not invent, paraphrase as authoritative, or silently alter official requirements.
+- `source_reqs/` is a local-only, gitignored scratch folder of requirement text for internal testing. Never commit it, bake it into an image, or ship it in seed data.
 - Never claim official Scouting America (or other organization) recognition.
 - Reading about an activity is not completing it. AI output alone never marks a requirement complete.
 - No microservices, queues, caches, or Kubernetes without a concrete requirement.
