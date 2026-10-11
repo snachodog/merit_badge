@@ -90,3 +90,6 @@ override.tf.json
 # Images & archives generated locally
 *.zip
 *.png~
+
+# Local backups
+backups/
