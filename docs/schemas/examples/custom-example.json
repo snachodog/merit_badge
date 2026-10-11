@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "import_key": "example/personal-astronomy/backyard-astronomer/v1",
+  "program": {
+    "slug": "personal-astronomy",
+    "name": "Personal Astronomy",
+    "owner": "self",
+    "program_type": "custom",
+    "description": "An example custom program. It is not an official program."
+  },
+  "award": {
+    "slug": "backyard-astronomer",
+    "name": "Backyard Astronomer",
+    "award_type": "custom",
+    "description": "An example custom achievement written for this app."
+  },
+  "version": {
+    "label": "v1",
+    "status": "draft",
+    "source_status": "unverified",
+    "rights_status": "user_authored",
+    "change_summary": "Example content for testing the importer."
+  },
+  "requirements": [
+    {
+      "display_number": "1",
+      "text": "Identify ten constellations visible from your location.",
+      "text_origin": "user_provided",
+      "action_tags": ["identify", "observe"]
+    },
+    {
+      "display_number": "2",
+      "text": "Keep an observing journal on at least four separate nights.",
+      "text_origin": "user_provided",
+      "action_tags": ["record", "log", "observe"],
+      "safety_notes": "Tell an adult where you are observing after dark."
+    },
+    {
+      "display_number": "3",
+      "text": "Do both of the following.",
+      "text_origin": "user_provided",
+      "completion_logic": "all",
+      "children": [
+        {
+          "display_number": "3a",
+          "text": "Sketch the Moon on three different nights.",
+          "text_origin": "user_provided",
+          "action_tags": ["make", "observe"]
+        },
+        {
+          "display_number": "3b",
+          "text": "Do any one of the following.",
+          "text_origin": "user_provided",
+          "completion_logic": "choose_n",
+          "completion_count": 1,
+          "children": [
+            {
+              "display_number": "3b(1)",
+              "text": "Find a planet and describe how it differs from a star.",
+              "text_origin": "user_provided",
+              "action_tags": ["identify", "describe"]
+            },
+            {
+              "display_number": "3b(2)",
+              "text": "Visit a public observatory or star party and write what you learned.",
+              "text_origin": "user_provided",
+              "action_tags": ["visit", "reflect"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

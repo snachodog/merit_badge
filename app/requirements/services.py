@@ -65,7 +65,12 @@ class TreeItem:
 
 def get_tree(version):
     """Return the version's nodes as nested TreeItem objects (roots, in display order)."""
-    nodes = {n.pk: n for n in RequirementNode.objects.filter(award_version=version)}
+    nodes = {
+        n.pk: n
+        for n in RequirementNode.objects.filter(award_version=version)
+        .select_related("source")
+        .prefetch_related("action_tags")
+    }
     items = {pk: TreeItem(node=n, depth=0) for pk, n in nodes.items()}
     roots = []
     for spec, depth in tree_rules.walk(node_specs(version)):

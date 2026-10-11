@@ -1,0 +1,400 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/program-import.schema.json",
+  "title": "Program import",
+  "description": "Version 1.0. Imports always create a draft version. The app also checks rules a schema cannot express: tree logic, source and rights rules for official-source text, and size limits (file at most 1 MiB).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "program",
+    "award",
+    "version",
+    "requirements"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "import_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Repeat imports with the same key and content do nothing. Default: owner/program/award/version label."
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slug",
+        "name",
+        "owner"
+      ],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:[-_][a-z0-9]+)*$",
+          "maxLength": 100
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "owner": {
+          "oneOf": [
+            {
+              "const": "self"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "slug",
+                "name"
+              ],
+              "properties": {
+                "slug": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(?:[-_][a-z0-9]+)*$",
+                  "maxLength": 100
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "owner_type": {
+                  "enum": [
+                    "organization",
+                    "individual",
+                    "other"
+                  ]
+                },
+                "website_url": {
+                  "type": "string",
+                  "pattern": "^https?://",
+                  "maxLength": 200
+                }
+              }
+            }
+          ]
+        },
+        "program_type": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "is_custom": {
+          "type": "boolean"
+        }
+      }
+    },
+    "award": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slug",
+        "name"
+      ],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:[-_][a-z0-9]+)*$",
+          "maxLength": 100
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "award_type": {
+          "enum": [
+            "merit_badge",
+            "rank",
+            "adventure",
+            "award",
+            "certificate",
+            "custom",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "category": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "official_identifier": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "eligibility_notes": {
+          "type": "string",
+          "maxLength": 5000
+        }
+      }
+    },
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "source_status"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "status": {
+          "const": "draft"
+        },
+        "source_status": {
+          "enum": [
+            "unverified",
+            "reviewed",
+            "verified",
+            "disputed"
+          ]
+        },
+        "rights_status": {
+          "enum": [
+            "unknown",
+            "permission_confirmed",
+            "licensed",
+            "public_domain",
+            "user_authored",
+            "link_only"
+          ],
+          "default": "unknown"
+        },
+        "effective_from": {
+          "type": "string",
+          "format": "date"
+        },
+        "effective_until": {
+          "type": "string",
+          "format": "date"
+        },
+        "source_checked_at": {
+          "type": "string",
+          "description": "ISO date or date-time."
+        },
+        "change_summary": {
+          "type": "string",
+          "maxLength": 5000
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "title"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "publisher_or_creator": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https?://",
+            "maxLength": 200
+          },
+          "source_type": {
+            "enum": [
+              "official_publication",
+              "official_web_page",
+              "user_upload",
+              "external_educational",
+              "user_authored",
+              "other"
+            ]
+          },
+          "license_or_permission_notes": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "attribution_requirements": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "review_status": {
+            "enum": [
+              "unreviewed",
+              "reviewed",
+              "verified",
+              "disputed"
+            ]
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "display_number": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "node_type": {
+          "enum": [
+            "atomic",
+            "group",
+            "note"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 5000
+        },
+        "text_origin": {
+          "enum": [
+            "official_source",
+            "user_provided",
+            "app_authored",
+            "other"
+          ],
+          "default": "user_provided"
+        },
+        "source": {
+          "type": "string",
+          "description": "The key of an entry in sources."
+        },
+        "action_tags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "read",
+              "discuss",
+              "explain",
+              "describe",
+              "demonstrate",
+              "show",
+              "make",
+              "build",
+              "plan",
+              "prepare",
+              "conduct",
+              "participate",
+              "teach",
+              "interview",
+              "visit",
+              "observe",
+              "record",
+              "log",
+              "research",
+              "reflect",
+              "calculate",
+              "identify",
+              "compare",
+              "other"
+            ]
+          }
+        },
+        "completion_logic": {
+          "enum": [
+            "single",
+            "all",
+            "any",
+            "choose_n",
+            "sequence",
+            "conditional"
+          ],
+          "description": "Default: all if the node has children, otherwise single."
+        },
+        "completion_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Only with choose_n."
+        },
+        "condition_expression": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "key",
+            "equals"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "equals": {
+              "type": [
+                "string",
+                "integer",
+                "boolean"
+              ]
+            }
+          },
+          "description": "Only with conditional."
+        },
+        "estimated_effort": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "safety_notes": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          },
+          "description": "At most 8 levels deep; 2000 requirements in total."
+        },
+        "evidence_expectations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Accepted but not stored yet."
+        },
+        "constraints": {
+          "type": "object",
+          "description": "Accepted but not stored yet."
+        }
+      }
+    }
+  }
+}

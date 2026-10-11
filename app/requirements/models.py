@@ -236,3 +236,16 @@ class RequirementActionTag(models.Model):
     def delete(self, *args, **kwargs):
         _assert_version_open(self.node.award_version_id)
         return super().delete(*args, **kwargs)
+
+
+class ImportRecord(TimestampedModel):
+    """Remembers which JSON import created a draft, so repeating it is safe."""
+
+    import_key = models.CharField(max_length=300, unique=True)
+    content_sha256 = models.CharField(max_length=64)
+    award_version = models.ForeignKey(
+        AwardVersion, null=True, on_delete=models.SET_NULL, related_name="import_records"
+    )
+
+    def __str__(self):
+        return self.import_key
