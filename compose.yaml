@@ -1,0 +1,73 @@
+name: meritbadge
+
+services:
+  db:
+    image: postgres:16.10-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-meritbadge}
+      POSTGRES_USER: ${POSTGRES_USER:-meritbadge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # No "ports:" on purpose: PostgreSQL is reachable only on the compose network.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      target: runtime
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-}
+      DJANGO_SECURE_COOKIES: ${DJANGO_SECURE_COOKIES:-false}
+      DJANGO_TRUST_PROXY_SSL_HEADER: ${DJANGO_TRUST_PROXY_SSL_HEADER:-false}
+      DJANGO_HSTS_SECONDS: ${DJANGO_HSTS_SECONDS:-0}
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-meritbadge}
+      POSTGRES_USER: ${POSTGRES_USER:-meritbadge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      BOOTSTRAP_ADMIN_USERNAME: ${BOOTSTRAP_ADMIN_USERNAME:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+    volumes:
+      - media:/data/media
+    ports:
+      - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Optional: `docker compose --profile test run --rm test`
+  test:
+    profiles: ["test"]
+    build:
+      context: .
+      target: dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SECRET_KEY: test-only-secret
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-meritbadge}
+      POSTGRES_USER: ${POSTGRES_USER:-meritbadge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+
+volumes:
+  pgdata:
+  media:
