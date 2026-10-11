@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     "config.core",
     "programs",
     "requirements",
+    "learning",
+    "evidence",
 ]
 
 MIDDLEWARE = [
@@ -123,12 +125,20 @@ STATIC_ROOT = Path(os.environ.get("DJANGO_STATIC_ROOT", BASE_DIR.parent / "stati
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    # Private evidence files. Never served by URL; see evidence/views.py.
+    "evidence": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {"location": str(Path(os.environ.get("DJANGO_MEDIA_ROOT", BASE_DIR.parent / "media")) / "evidence")},
+    },
 }
 
 # Evidence/uploads: private, outside static, never served via a public URL.
 # Intentionally no MEDIA_URL; later phases will serve files through
 # authenticated views only. See docs/decisions/0002-evidence-storage.md.
 MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT", BASE_DIR.parent / "media"))
+
+# Largest evidence upload, in megabytes. Allowed file types are in evidence/validation.py.
+EVIDENCE_MAX_UPLOAD_BYTES = int(float(os.environ.get("EVIDENCE_MAX_UPLOAD_MB", "25")) * 1024 * 1024)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

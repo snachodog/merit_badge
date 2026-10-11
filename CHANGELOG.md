@@ -5,6 +5,25 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+### Added
+- Phase 2 part A (no learner screens yet): new `learning` app (LearningPlan, RequirementProgress,
+  PlanStatusLog) and `evidence` app (EvidenceRecord), with migrations.
+- Plans start only from a published version and stay pinned to it. Creating a plan creates a
+  progress row for every requirement. Plan changes (planned, active, paused, personally completed,
+  abandoned, archived) are logged.
+- Pure completion engine (`learning/completion.py`) for single, all, any, choose_n, sequence and
+  conditional logic. It returns complete, incomplete, unresolved or not applicable per node, plus the
+  outstanding items. Counts come from the engine; there is no editable percentage.
+- Prior knowledge and prior work notes never complete a requirement. `not_applicable_by_explicit_rule`
+  is accepted only when a conditional rule makes the branch not apply.
+- Action-tag rule: tags such as interview, teach and demonstrate need suitable evidence or an explicit
+  learner attestation before completion. The mapping is in `learning/constants.py`.
+- `evidence_expectations` on requirements (migration `requirements.0003`), stored by the JSON importer.
+- Evidence uploads: extension, size, content-type and signature checks, generated file names, private
+  storage under `DJANGO_MEDIA_ROOT/evidence`, owner-checked download view, deletion report and delete.
+  `human_observed` needs a reviewer label and is set only by a service function.
+- `EVIDENCE_MAX_UPLOAD_MB` setting (default 25), documented in `.env.example`.
+
 ## [0.2.0] - 2026-10-10
 
 

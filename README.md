@@ -135,7 +135,7 @@ docker compose run --rm -v "$PWD/docs:/docs:ro" web \
 ```
 
 Errors name the place in the file, such as `requirements[2].children[0].text`.
-The importer accepts `evidence_expectations` and `constraints` (from `PLAN.md` 14.3) but does not store them yet.
+The importer stores `evidence_expectations` (a list of short text labels) on each requirement. It accepts `constraints` (from `PLAN.md` 14.3) but does not store it yet.
 
 ## Layout
 
