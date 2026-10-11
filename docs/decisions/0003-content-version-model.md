@@ -18,9 +18,8 @@ shared definitions and personal progress.
 
 ## Consequences
 Historical plans remain valid when requirements change. Costs extra rows and a
-publication workflow. Details will be finalized and this ADR moved to Accepted
-when Phase 1 models and tests land.
-
+publication workflow. Details will be refined when the Phase 1 models and tests land; any
+change will be recorded here.
 
 ## Future work (out of scope)
 Determining whether historical requirements satisfy newer ones, and carrying progress forward, is deferred (see PLAN.md roadmap candidates). The version model keeps plans pinned and non-destructive so such a mapping can be added later.

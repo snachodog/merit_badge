@@ -69,3 +69,6 @@ A milestone is done only when:
 
 - If an instruction conflicts with `PLAN.md`, flag it to the owner and stop on that point. Do not resolve it silently.
 - If a decision is open in `PLAN.md` §18 and blocks safe progress, ask the owner. Otherwise pick the simplest reversible option and record it in an ADR under `docs/decisions/`.
+
+## Plain language (ISO 24495-1)
+All text written for people follows ISO 24495-1 (see PLAN.md §2.6): docs, UI text, error messages, ADRs, commit messages, and every message to the project owner. Write for what the reader needs, make it easy to find, use short sentences and familiar words, and end with the next action or decision. Official requirement text is the exception: reproduce it exactly.

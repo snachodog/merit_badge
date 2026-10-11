@@ -168,7 +168,20 @@ Use direct, respectful language. Avoid infantilizing visual design, unnecessary 
 
 Users should be able to move quickly through material they already understand while still addressing the actual requirements.
 
-## 2.6 Honest evidence
+## 2.6 Plain language (ISO 24495-1)
+
+All text written for people follows ISO 24495-1 (plain language: governing principles and guidelines). This covers the user interface, error messages, README and other documentation, ADRs, commit and pull request descriptions, and all agent communication with the project owner.
+
+The four principles are that readers can:
+
+1. Get what they need: content is relevant to the reader's purpose.
+2. Find what they need: structure, headings, and navigation make information easy to locate.
+3. Understand what they find: short sentences, familiar words, defined terms, and one idea per paragraph.
+4. Use what they find: content supports the next action, such as a step, a decision, or a command to run.
+
+Exceptions: authoritative requirement text is reproduced as written by its source (see Section 2.1) and is not rewritten. Plain-language explanation goes in the separate interpretation field. Code, schemas, and commands are shown as they are.
+
+## 2.7 Honest evidence
 
 The app must distinguish between:
 
