@@ -4,7 +4,9 @@ A private, self-hosted, browser-based platform for working through Scouting-styl
 requirements and custom achievements. It records personal learning only and does
 **not** confer official Scouting America (or any other organization's) awards.
 See `PLAN.md` for the full specification. This repository currently implements
-**Phase 0** (deployment foundation): login, a health check, and a home page.
+**Phase 1** (generic program and requirement engine) on top of the Phase 0 foundation:
+login, a health check, a catalog with search, nested requirement display, manual
+authoring of custom programs, and JSON import.
 
 Stack: Django 5.2 LTS, PostgreSQL 16, gunicorn, WhiteNoise, Docker Compose.
 No external services, analytics, or telemetry.
@@ -95,8 +97,48 @@ Tests use pytest-django against PostgreSQL (a throwaway test database is created
 docker compose --profile test run --rm --build test
 ```
 
+## Using the catalog and authoring
+
+After login, use the top navigation.
+
+- **Catalog** (`/catalog/`) lists programs, awards and versions. Search covers names,
+  descriptions and requirement text. Each version shows its status and its content-review
+  and rights labels. "Unverified" means nobody has checked the wording against its source.
+- **A version page** shows the requirement tree with numbers, how each group is completed
+  (all, any, choose N, in order, conditional), action tags, and whether the text is
+  "Official text" or not.
+- **New custom program** creates a program, then an award, then a draft version.
+  On the draft's edit page you can add top-level or child requirements, edit, move up or down,
+  and delete. Submit the draft for review, then publish. Publishing lists every problem found.
+  A published version cannot be edited. Use "Create a draft revision" to correct it.
+
+## Import from JSON
+
+The format is `docs/schemas/program-import.schema.json` (version 1.0). A small custom
+example is `docs/schemas/examples/custom-example.json`. It is not official content.
+
+- Imports always create a **draft** version. They never change a published, archived or
+  in-review version. A conflict is reported instead.
+- Repeating an import with the same `import_key` and content does nothing. The same key with
+  changed content replaces the requirements of the still-draft version.
+- Official-source text needs a source and a rights status, or the version must be marked `unverified`.
+- Files over 1 MiB, 2000 requirements, or 8 levels of nesting are refused.
+
+In the browser, open **Import JSON**, upload the file, read the dry-run report, then choose
+"Import as draft". On the command line (the `docs` folder is not in the image, so mount it):
+
+```sh
+docker compose run --rm -v "$PWD/docs:/docs:ro" web \
+  python manage.py import_program /docs/schemas/examples/custom-example.json --dry-run
+docker compose run --rm -v "$PWD/docs:/docs:ro" web \
+  python manage.py import_program /docs/schemas/examples/custom-example.json
+```
+
+Errors name the place in the file, such as `requirements[2].children[0].text`.
+The importer accepts `evidence_expectations` and `constraints` (from `PLAN.md` 14.3) but does not store them yet.
+
 ## Layout
 
-`app/config` Django project (settings, urls, `core` health/home views and the
+`app/programs` and `app/requirements` (models, services, views, importer), `app/config` Django project (settings, urls, `core` health/home views and the
 `bootstrap_admin` command), `app/templates`, `tests/`, `docs/` (operations and
 `decisions/` ADRs), `scripts/entrypoint.sh`, `compose.yaml`, `Dockerfile`.

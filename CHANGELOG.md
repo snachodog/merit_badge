@@ -22,3 +22,12 @@ All notable changes to this project are documented here. Format based on
   and conditional logic. Publishing checks the tree and the source and rights rules.
 - Django Admin for all models with an inline requirement editor; published versions are read-only.
 - Tests for tree rules, immutability, revisions, publish rules, and admin permissions.
+- Phase 1 part B: catalog browse and search (names, descriptions, requirement text), with version
+  status and content-review labels.
+- Nested requirement display with display numbers, completion-logic labels, action tags, and
+  "Official text" versus not-official labels. Login required.
+- Manual authoring pages for custom programs, awards, draft versions and nested requirements
+  (add child, edit, reorder, delete), with submit, publish, return, archive and revise.
+- JSON import: schema `docs/schemas/program-import.schema.json`, example file, dry-run report with
+  error paths, import keys for repeat imports, drafts only, `import_program` command, and an upload page.
+- `ImportRecord` model and migration `requirements.0002`.

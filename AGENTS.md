@@ -9,8 +9,8 @@ A self-hosted, single-user web app for working through requirement-based program
 
 ## Current scope
 
-- Work one roadmap phase at a time. **Only Phase 0** (`PLAN.md` §16) is in scope now.
-- Do not start a later phase, import catalog content, or build AI features until the owner reviews Phase 0 and approves.
+- Work one roadmap phase at a time. **Only Phase 1** (`PLAN.md` §16) is in scope now. Phase 0 is done.
+- Do not start a later phase or build AI features until the owner reviews Phase 1 and approves.
 - Record proposed additions as follow-up items instead of building them.
 
 ## Non-negotiable constraints (`PLAN.md` §0.2)
@@ -49,7 +49,7 @@ A milestone is done only when:
 
 ## Commits
 
-- Do not run `git commit` or `git add` unless the owner asks. Leave changes in the working tree.
+- Do not run `git commit` or `git add` unless the owner asks. Leave changes in the working tree. The owner has asked the lead session to commit finished work.
 - When committing, follow [Conventional Commits](ai/claude/conventions/commits.md).
 
 ## Versioning (provisional default, pending owner confirmation)
