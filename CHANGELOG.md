@@ -5,6 +5,8 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-11
+
 ### Added
 - Phase 2 part B (learner screens): My Learning, start a plan from a published version (with a
   requirement summary first), plan overview with derived status counts and outstanding required items,
