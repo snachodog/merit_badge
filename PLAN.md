@@ -38,7 +38,7 @@ Do not generate an entire application blindly if a repository already exists. If
 - Do not require analytics, advertising, telemetry, social logins, or other SaaS services.
 - Do not implement public registration, public profiles, social feeds, leaderboards, marketplaces, or community features unless explicitly requested later.
 - Do not invent, paraphrase as authoritative, or silently alter official requirements.
-- Do not scrape or republish program content unless the source and applicable permissions allow it.
+- Do not scrape or republish program content in the repository, in container images, in seed data, or in any shipped or shared build, unless the source and applicable permissions allow it. Exception: for local, internal testing only, the owner may place requirement text in the gitignored `source_reqs/` folder (see Section 11.1).
 - Do not claim that the app confers official Scouting America or another organization's awards.
 - Do not equate reading about a practical activity with completing it.
 - Do not mark a requirement complete solely because an AI agent says it is complete.
@@ -239,6 +239,7 @@ Keep integration points clean so these can be added without replacing the core d
 
 - Historical Cub Scout, Scouts BSA, rank, and merit badge requirement catalogs.
 - Compare two requirement versions and show changes.
+- Determine whether work completed under a historical requirement version satisfies a newer version's requirements, and carry that progress forward with explicit learner confirmation (never automatically). Out of scope until designed; revisit with Phase 6.
 - Broader and more complete official Scouting America catalog coverage.
 - Other US youth program catalogs.
 - International programs and localized requirement text.
@@ -834,6 +835,8 @@ Public accessibility does not automatically grant permission to reproduce or red
 
 Before seeding a public or redistributable catalog, identify the applicable license or obtain written permission where needed. Keep rights and provenance metadata attached to each source and version.
 
+**Local internal-testing exception:** The owner may gather a small amount of requirement text (roughly one or two MB) into `source_reqs/` on the owner's own machine, to check that the app is being built as intended. This folder is gitignored and dockerignored. It must never be committed, baked into an image, included in seed data or fixtures, or be part of any shared or released build. Content used this way is treated as `rights_status: unknown` and `source_status: unverified`, and does not make it into the final product unless Section 11.1's permission rules are otherwise satisfied.
+
 The application should support several source approaches:
 
 - Manually entered user content.
@@ -842,7 +845,7 @@ The application should support several source approaches:
 - Source links without reproducing protected text when appropriate.
 - Public-domain material with recorded provenance.
 
-Do not implement unauthorized scraping as a shortcut. Automated import should be added only where the source and method permit it.
+Do not implement unauthorized scraping as a shortcut in the product. Automated import should be added only where the source and method permit it. Manual or scripted gathering into `source_reqs/` for local internal testing (see above) is the only exception, and such scripts must not be committed to ship as product features.
 
 ## 11.2 Source of truth
 
@@ -1254,7 +1257,7 @@ The MVP is ready for regular personal use when all of the following are true:
 Do not block Phase 0 unless a decision is required to start it. Record decisions and revisit when evidence is available.
 
 1. **Final product name:** Keep “Merit Badge Counselor” as an internal name or choose a broader public-facing name after trademark and affiliation review.
-2. **Official content source and rights:** Determine exactly which Scouting requirements and assets may be reproduced and how they may be imported.
+2. **Official content source and rights:** Determine exactly which Scouting requirements and assets may be reproduced and how they may be imported. Local internal testing via `source_reqs/` is already allowed and does not wait on this decision; shipping or sharing any such content does.
 3. **Initial catalog coverage:** Decide whether the first seeded catalog is a carefully validated subset or broader catalog coverage as available.
 4. **AI provider:** Select an external API or an existing local inference endpoint. Core use must remain possible without it.
 5. **Evidence file limits:** Set practical file-size limits and allowed types based on the private server's capacity.
