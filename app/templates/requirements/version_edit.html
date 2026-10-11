@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ award.name }} {{ version.version_label }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'catalog' %}">Catalog</a> / <a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a> / <a href="{% url 'version_detail' version.pk %}">Reader view</a></p>
+<h1>{{ award.name }}, version {{ version.version_label }}: {{ version.get_status_display }}</h1>
+<div class="stack">
+  {% include "requirements/_banner.html" %}
+  <section class="card stack" aria-labelledby="wf-h">
+    <h2 id="wf-h">Workflow</h2>
+    {% if problems %}
+    <div role="alert" class="msg warning">
+      <p>Fix these {{ problems|length }} problem{{ problems|length|pluralize }} before publishing:</p>
+      <ul>{% for p in problems %}<li>{{ p }}</li>{% endfor %}</ul>
+    </div>
+    {% elif version.status == 'draft' or version.status == 'review' %}
+    <p class="msg">No problems found. This version can be published after review.</p>
+    {% endif %}
+    <div class="controls">
+      {% if version.status == 'draft' %}
+        <a class="button secondary" href="{% url 'version_meta' version.pk %}">Edit version details</a>
+        <form method="post" action="{% url 'version_action' version.pk 'submit' %}">{% csrf_token %}<button type="submit">Submit for review</button></form>
+      {% elif version.status == 'review' %}
+        <form method="post" action="{% url 'version_action' version.pk 'return' %}">{% csrf_token %}<button class="secondary" type="submit">Return to draft</button></form>
+        <form method="post" action="{% url 'version_action' version.pk 'publish' %}">{% csrf_token %}<button type="submit">Publish (cannot be edited afterwards)</button></form>
+      {% elif version.status == 'published' %}
+        <form method="post" action="{% url 'version_action' version.pk 'revise' %}">{% csrf_token %}<button type="submit">Create a draft revision</button></form>
+        <form method="post" action="{% url 'version_action' version.pk 'archive' %}">{% csrf_token %}<button class="secondary" type="submit">Archive</button></form>
+      {% else %}
+        <p>Archived versions cannot be changed.</p>
+      {% endif %}
+    </div>
+  </section>
+  <section aria-labelledby="req-h">
+    <h2 id="req-h">Requirements</h2>
+    {% if editing %}<p><a class="button" href="{% url 'node_add' version.pk %}">Add a top-level requirement</a></p>{% else %}<p>Only a draft can be edited.</p>{% endif %}
+    {% if tree %}<ol class="req-tree">{% for item in tree %}{% include "requirements/_node.html" with item=item %}{% endfor %}</ol>
+    {% else %}<p>This version has no requirements yet.</p>{% endif %}
+  </section>
+</div>
+{% endblock %}

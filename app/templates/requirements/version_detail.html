@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ award.name }} {{ version.version_label }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'catalog' %}">Catalog</a> / <a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a></p>
+<h1>{{ award.name }}, version {{ version.version_label }}</h1>
+<div class="stack">
+  {% include "requirements/_banner.html" %}
+  <section aria-labelledby="req-h">
+    <h2 id="req-h">Requirements</h2>
+    {% if tree %}<ol class="req-tree">{% for item in tree %}{% include "requirements/_node.html" with item=item %}{% endfor %}</ol>
+    {% else %}<p>This version has no requirements yet.</p>{% endif %}
+  </section>
+  <p><a href="{% url 'version_edit' version.pk %}">{% if version.status == 'draft' %}Edit this draft{% else %}Manage this version{% endif %}</a></p>
+</div>
+{% endblock %}

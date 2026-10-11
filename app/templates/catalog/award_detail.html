@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ award.name }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'catalog' %}">Catalog</a> / <a href="{% url 'program_detail' award.program.pk %}">{{ award.program.name }}</a></p>
+<h1>{{ award.name }} <span class="badge">{{ award.get_award_type_display }}</span></h1>
+{% if award.description %}<p>{{ award.description|linebreaksbr }}</p>{% endif %}
+{% if award.eligibility_notes %}<p><strong>Eligibility notes:</strong> {{ award.eligibility_notes }}</p>{% endif %}
+<h2>Versions</h2>
+<table>
+  <thead><tr><th scope="col">Version</th><th scope="col">Status</th><th scope="col">Source</th><th scope="col">Rights</th><th scope="col">Actions</th></tr></thead>
+  <tbody>
+  {% for v in versions %}
+    <tr>
+      <th scope="row"><a href="{% url 'version_detail' v.pk %}">{{ v.version_label }}</a></th>
+      <td>{{ v.get_status_display }}</td>
+      <td>{{ v.get_source_status_display }}</td>
+      <td>{{ v.get_rights_status_display }}</td>
+      <td><a href="{% url 'version_edit' v.pk %}">{% if v.status == 'draft' %}Edit{% else %}Manage{% endif %}</a></td>
+    </tr>
+  {% empty %}<tr><td colspan="5">No versions yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+<p><a class="button" href="{% url 'version_create' award.pk %}">Add a draft version</a></p>
+{% endblock %}

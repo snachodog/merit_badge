@@ -2,7 +2,13 @@
 {% block content %}
 <div class="card">
   <h1>Welcome, {{ user.get_username }}</h1>
-  <p>Your private achievement and learning platform is running. Features arrive in later phases.</p>
+  <p>Your private achievement and learning platform is running.</p>
+  <ul>
+    <li><a href="{% url 'catalog' %}">Browse and search the catalog</a></li>
+    <li><a href="{% url 'program_create' %}">Create a custom program</a></li>
+    <li><a href="{% url 'import_program' %}">Import a program from JSON</a></li>
+  </ul>
+  <p>Learning plans and progress arrive in a later phase.</p>
   <p>This app records personal learning and does not confer official Scouting awards.</p>
 </div>
 {% endblock %}

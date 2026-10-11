@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Import JSON{% endblock %}
+{% block content %}
+<h1>Import a program from JSON</h1>
+<div class="stack">
+<section class="card stack">
+  <p>The file is checked first. Nothing is saved until you confirm. Imports always create a draft version. They never change a published version.</p>
+  <p>Maximum size {{ max_kib }} KiB. The format is in <code>docs/schemas/program-import.schema.json</code>.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="file">JSON file</label>
+    <input id="file" name="file" type="file" accept=".json,application/json" required>
+    <button type="submit">Check file (dry run)</button>
+  </form>
+</section>
+{% if report %}
+<section class="card stack" aria-labelledby="rep-h">
+  <h2 id="rep-h">Check result{% if filename %} for {{ filename }}{% endif %}</h2>
+  <p><strong>
+    {% if report.outcome == 'invalid' %}The file has errors. Nothing can be imported.
+    {% elif report.outcome == 'conflict' %}There is a conflict. Nothing can be imported.
+    {% elif report.outcome == 'unchanged' %}Already imported with the same content. Nothing to do.
+    {% else %}The file is valid and ready to import.{% endif %}</strong></p>
+  {% if report.errors %}<div role="alert"><h3>Errors ({{ report.errors|length }})</h3>
+    <ul>{% for path, message in report.errors %}<li><code>{{ path|default:"(file)" }}</code>: {{ message }}</li>{% endfor %}</ul></div>{% endif %}
+  {% if report.conflicts %}<div role="alert"><h3>Conflicts</h3><ul>{% for c in report.conflicts %}<li>{{ c }}</li>{% endfor %}</ul></div>{% endif %}
+  {% if report.creates %}<h3>Will create</h3><ul>{% for c in report.creates %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+  {% if report.updates %}<h3>Will update</h3><ul>{% for c in report.updates %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+  {% if report.warnings %}<h3>Warnings</h3><ul>{% for c in report.warnings %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+  {% if report.can_commit %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="commit"><button type="submit">Import as draft</button></form>
+  {% endif %}
+</section>
+{% endif %}
+</div>
+{% endblock %}

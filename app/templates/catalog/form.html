@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ title }}</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "catalog/_form_fields.html" %}
+    <button type="submit">Save</button>
+    {% if back_url %}<a href="{{ back_url }}">Cancel</a>{% endif %}
+  </form>
+</div>
+{% endblock %}

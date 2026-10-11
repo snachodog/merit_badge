@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ program.name }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'catalog' %}">Catalog</a></p>
+<h1>{{ program.name }} {% if program.is_custom %}<span class="badge">Custom</span>{% endif %}</h1>
+<p>Owner: {{ program.owner.name }}. Status: {{ program.get_status_display }}.</p>
+{% if program.description %}<p>{{ program.description|linebreaksbr }}</p>{% endif %}
+<h2>Awards</h2>
+<ul>{% for award in awards %}<li><a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a> ({{ award.versions.all|length }} version{{ award.versions.all|length|pluralize }})</li>{% empty %}<li>No awards yet.</li>{% endfor %}</ul>
+<p><a class="button" href="{% url 'award_create' program.pk %}">Add an award</a></p>
+{% endblock %}

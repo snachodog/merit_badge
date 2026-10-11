@@ -1,0 +1,18 @@
+{% load i18n %}
+<section class="card stack" aria-labelledby="status-h">
+  <h2 id="status-h">Version status and sources</h2>
+  <table>
+    <tbody>
+      <tr><th scope="row">Version status</th><td>{{ version.get_status_display }}{% if version.published_at %} (published {{ version.published_at|date:"Y-m-d" }}){% endif %}</td></tr>
+      <tr><th scope="row">Content review</th><td>{{ version.get_source_status_display }}{% if version.source_checked_at %}, checked {{ version.source_checked_at|date:"Y-m-d" }}{% else %}, no check date{% endif %}</td></tr>
+      <tr><th scope="row">Rights</th><td>{{ version.get_rights_status_display }}</td></tr>
+      {% if version.effective_from or version.effective_until %}<tr><th scope="row">Effective</th><td>{{ version.effective_from|default:"unknown" }} to {{ version.effective_until|default:"unknown" }}</td></tr>{% endif %}
+      {% if origin_counts %}<tr><th scope="row">Text origin</th><td>{% for label, n in origin_counts %}{{ label }}: {{ n }}{% if not forloop.last %}; {% endif %}{% endfor %}</td></tr>{% endif %}
+      {% if version.change_summary %}<tr><th scope="row">Change summary</th><td>{{ version.change_summary }}</td></tr>{% endif %}
+    </tbody>
+  </table>
+  {% if version.source_status != 'verified' %}
+  <p class="msg warning">This content is <strong>{{ version.get_source_status_display|lower }}</strong>. Check the wording against its source before relying on it.</p>
+  {% endif %}
+  <p>This app records personal learning. It does not confer official awards. Only text labeled "Official text" claims to come from an official source.</p>
+</section>

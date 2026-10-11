@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Catalog{% endblock %}
+{% block content %}
+<h1>Catalog</h1>
+<form method="get" class="searchbar" role="search" aria-label="Search the catalog">
+  <label for="q" class="skip">Search</label>
+  <input id="q" name="q" type="search" value="{{ q }}" maxlength="200" placeholder="Search names, descriptions and requirement text">
+  <button type="submit">Search</button>
+</form>
+<p>Version status and source review are shown for every version. "Unverified" means nobody has checked the wording against its source.</p>
+{% if q %}<p>{{ result_count }} award{{ result_count|pluralize }} found for "{{ q }}". <a href="{% url 'catalog' %}">Clear search</a></p>{% endif %}
+{% for program, awards in programs.items %}
+<section class="card stack" aria-labelledby="p{{ program.pk }}">
+  <h2 id="p{{ program.pk }}"><a href="{% url 'program_detail' program.pk %}">{{ program.name }}</a>
+    {% if program.is_custom %}<span class="badge">Custom</span>{% endif %}</h2>
+  <ul>
+  {% for award in awards %}
+    <li><a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a> <span class="badge">{{ award.get_award_type_display }}</span>
+      <ul>
+      {% for v, text_hit in award.version_rows %}
+        <li><a href="{% url 'version_detail' v.pk %}">Version {{ v.version_label }}</a>
+          <span class="badge">{{ v.get_status_display }}</span>
+          <span class="badge {% if v.source_status != 'verified' %}warn{% endif %}">Source: {{ v.get_source_status_display }}</span>
+          <span class="badge">Rights: {{ v.get_rights_status_display }}</span>
+          {% if text_hit %}<span class="badge">Matches requirement text</span>{% endif %}
+        </li>
+      {% empty %}<li>No versions yet.</li>{% endfor %}
+      </ul>
+    </li>
+  {% endfor %}
+  </ul>
+</section>
+{% empty %}
+  {% if q %}<p>Nothing matches. Try fewer or shorter words.</p>{% else %}<p>The catalog is empty. <a href="{% url 'program_create' %}">Create a custom program</a> or <a href="{% url 'import_program' %}">import one from JSON</a>.</p>{% endif %}
+{% endfor %}
+{% for program in empty_programs %}
+<section class="card"><h2><a href="{% url 'program_detail' program.pk %}">{{ program.name }}</a></h2><p>No awards yet.</p></section>
+{% endfor %}
+{% endblock %}
