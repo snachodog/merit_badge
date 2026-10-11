@@ -15,5 +15,6 @@ media
 docs
 !docs/schemas
 *.md
+!README.md
 labels.yml
 source_reqs/

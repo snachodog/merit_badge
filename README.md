@@ -46,6 +46,162 @@ docker compose run --rm \
 Then log in at `/accounts/login/`. Further users can be added in the Django admin
 at `/admin/`. Avoid leaving `BOOTSTRAP_ADMIN_PASSWORD` in `.env` after use.
 
+## Run from the published image
+
+You do not need to clone this repository to run the app. Pull the image from Docker Hub
+instead. Two ready-made files sit at the top of the repo: `sample.docker-compose.yaml` and
+`sample.env`.
+
+1. Make an empty folder and copy in `sample.docker-compose.yaml` as `docker-compose.yaml`
+   and `sample.env` as `.env`.
+2. Edit `.env`. Set `DJANGO_SECRET_KEY` and `POSTGRES_PASSWORD`. Set `MERIT_BADGE_VERSION`
+   to a release such as `0.4.0`. Use `main` until the first image release exists.
+3. Run `docker compose up -d`.
+4. Create your first user. See [First user](#first-user-bootstrap).
+
+Both files below work with the same `.env`. The minimal file needs only the two required
+values. The robust file uses every setting in `.env`.
+
+### Minimal `docker-compose.yaml`
+
+The smallest working setup. It binds to `127.0.0.1` only and has no hardening beyond that.
+
+```yaml
+services:
+  db:
+    image: postgres:16.10-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: meritbadge
+      POSTGRES_USER: meritbadge
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meritbadge -d meritbadge"]
+      interval: 5s
+      retries: 20
+
+  web:
+    image: dogiakos/merit_badge:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+      POSTGRES_HOST: db
+      POSTGRES_DB: meritbadge
+      POSTGRES_USER: meritbadge
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - media:/data/media
+    ports:
+      - "127.0.0.1:8000:8000"
+
+volumes:
+  pgdata:
+  media:
+```
+
+### Robust `docker-compose.yaml`
+
+Use this for a server you leave running. It adds these protections:
+
+- **Private database:** PostgreSQL sits on an internal network and publishes no port.
+- **Health checks:** each service has one, and the web service waits for a healthy database.
+- **Locked-down web container:** read-only filesystem, all capabilities dropped, no new privileges.
+- **Limits:** memory and process caps, and rotated logs.
+- **Settings:** everything in `.env` (HTTPS, proxy, upload size, first user) is passed through.
+
+This text is the same as `sample.docker-compose.yaml`. A test checks that the two match.
+
+```yaml
+# Robust deployment using the published image. Copy to docker-compose.yaml
+# and copy sample.env to .env, then edit .env. See README.md.
+name: meritbadge
+
+services:
+  db:
+    image: postgres:16.10-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-meritbadge}
+      POSTGRES_USER: ${POSTGRES_USER:-meritbadge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [backend]            # no "ports:" and an internal network: PostgreSQL is never exposed
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    mem_limit: 512m
+    pids_limit: 200
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+  web:
+    image: ${MERIT_BADGE_IMAGE:-dogiakos/merit_badge}:${MERIT_BADGE_VERSION:-latest}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY in .env}
+      DJANGO_DEBUG: "false"
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-}
+      DJANGO_SECURE_COOKIES: ${DJANGO_SECURE_COOKIES:-false}
+      DJANGO_TRUST_PROXY_SSL_HEADER: ${DJANGO_TRUST_PROXY_SSL_HEADER:-false}
+      DJANGO_HSTS_SECONDS: ${DJANGO_HSTS_SECONDS:-0}
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-meritbadge}
+      POSTGRES_USER: ${POSTGRES_USER:-meritbadge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      BOOTSTRAP_ADMIN_USERNAME: ${BOOTSTRAP_ADMIN_USERNAME:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      EVIDENCE_MAX_UPLOAD_MB: ${EVIDENCE_MAX_UPLOAD_MB:-25}
+    volumes:
+      - media:/data/media          # evidence uploads: back this up with the database
+    networks: [backend, frontend]
+    ports:
+      - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /srv/.gunicorn:uid=10001,gid=10001   # gunicorn writes its control socket here
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 200
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+networks:
+  backend:
+    internal: true
+  frontend:
+
+volumes:
+  pgdata:
+  media:
+```
+
+Back up both volumes (`pgdata` and `media`). See `docs/operations.md`.
+
 ## Start, stop, recreate
 
 ```sh
