@@ -47,6 +47,9 @@ X_FRAME_OPTIONS = "DENY"
 # HSTS is opt-in (seconds); 0 disables. Prefer setting it at the reverse proxy.
 SECURE_HSTS_SECONDS = int(os.environ.get("DJANGO_HSTS_SECONDS", "0"))
 
+# Shown in the page title, and on certificates as the issuer.
+APP_NAME = "Merit Badge"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -60,6 +63,7 @@ INSTALLED_APPS = [
     "requirements",
     "learning",
     "evidence",
+    "achievements",
 ]
 
 MIDDLEWARE = [

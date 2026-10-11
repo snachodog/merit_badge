@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<h1>Settings</h1>
+<div class="stack">
+  <section class="card" aria-labelledby="prof-h">
+    <h2 id="prof-h">Profile</h2>
+    <p>Signed in as {{ user.get_username }}.</p>
+    <form method="post">{% csrf_token %}
+      {% include "catalog/_form_fields.html" %}
+      <button type="submit">Save</button>
+    </form>
+  </section>
+  <section class="card stack" aria-labelledby="exp-h">
+    <h2 id="exp-h">Export your data</h2>
+    <p>The data export is a JSON file with your plans, requirement statuses, notes, evidence details, achievement records, and version references. It does not contain evidence files. The format is in <code>docs/schemas/personal-export.md</code>.</p>
+    <p><a class="button" href="{% url 'export_json' %}">Download data (JSON)</a></p>
+    <p>The evidence archive is a separate zip file with your uploaded evidence files. It can be large.</p>
+    <p><a class="button" href="{% url 'export_evidence_zip' %}">Download evidence files (zip)</a></p>
+    <p>Both files may hold private details. Store them somewhere safe.</p>
+  </section>
+  <section class="card" aria-labelledby="del-h">
+    <h2 id="del-h">Delete your data</h2>
+    <p>This is not built yet. To remove one piece of evidence, use its Delete link on the requirement page.</p>
+  </section>
+</div>
+{% endblock %}

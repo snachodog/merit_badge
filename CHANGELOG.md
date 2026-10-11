@@ -6,6 +6,17 @@ All notable changes to this project are documented here. Format based on
 ## [Unreleased]
 
 ### Added
+- Phase 2 part B (learner screens): My Learning, start a plan from a published version (with a
+  requirement summary first), plan overview with derived status counts and outstanding required items,
+  and a requirement page with the six sections of `PLAN.md` 4.2. Forms cover prior knowledge, notes,
+  status changes, conditional answers, self-attestation, evidence (note, text, link, file, time log),
+  evidence deletion, human observation, and plan pause, resume, abandon, archive and completion.
+- New `achievements` app: AchievementRecord, created only when a plan is personally completed.
+  Printable HTML certificate with a versioned disclaimer (`achievements/disclaimer.py`) and an
+  Achievements list. No official graphics.
+- Settings page with display name, JSON data export, and a separate zip of evidence files.
+  Format: `docs/schemas/personal-export.md`.
+- Navigation: My Learning, Achievements, Settings.
 - Phase 2 part A (no learner screens yet): new `learning` app (LearningPlan, RequirementProgress,
   PlanStatusLog) and `evidence` app (EvidenceRecord), with migrations.
 - Plans start only from a published version and stay pinned to it. Creating a plan creates a
@@ -23,6 +34,10 @@ All notable changes to this project are documented here. Format based on
   storage under `DJANGO_MEDIA_ROOT/evidence`, owner-checked download view, deletion report and delete.
   `human_observed` needs a reviewer label and is set only by a service function.
 - `EVIDENCE_MAX_UPLOAD_MB` setting (default 25), documented in `.env.example`.
+
+### Follow-ups
+- Delete-my-data (account-level deletion, `PLAN.md` 13.3) is not built. Single evidence deletion works.
+- Interpretation and learning-resource content on the requirement page are placeholders (later phases).
 
 ## [0.2.0] - 2026-10-10
 

@@ -137,8 +137,21 @@ docker compose run --rm -v "$PWD/docs:/docs:ro" web \
 Errors name the place in the file, such as `requirements[2].children[0].text`.
 The importer stores `evidence_expectations` (a list of short text labels) on each requirement. It accepts `constraints` (from `PLAN.md` 14.3) but does not store it yet.
 
+## Learning, achievements and export
+
+Sign in, open a published version in the catalog, and choose **Start plan**. **My Learning** lists
+your plans. Each requirement page shows the official text, notes, evidence and status. Reading or
+claiming prior knowledge never completes a requirement. When every mandatory requirement is
+satisfied, the plan page offers **Record personal completion**. That creates an achievement record
+and a printable certificate (use the browser's print dialog). Certificates say they are personal and
+unofficial.
+
+Evidence files are stored privately on this server, not at public URLs. **Settings** lets you set a
+display name, download a JSON export, and download a zip of your evidence files. The format is in
+`docs/schemas/personal-export.md`. Account deletion is not built yet.
+
 ## Layout
 
-`app/programs` and `app/requirements` (models, services, views, importer), `app/config` Django project (settings, urls, `core` health/home views and the
+`app/programs`, `app/requirements`, `app/learning`, `app/evidence`, `app/achievements` (models, services, views, importer), `app/config` Django project (settings, urls, `core` health/home views and the
 `bootstrap_admin` command), `app/templates`, `tests/`, `docs/` (operations and
 `decisions/` ADRs), `scripts/entrypoint.sh`, `compose.yaml`, `Dockerfile`.
