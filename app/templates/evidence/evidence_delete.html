@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Delete evidence{% endblock %}
+{% block content %}
+<div class="card stack">
+  <h1>Delete this evidence?</h1>
+  <p><strong>{{ record }}</strong> ({{ record.get_evidence_type_display }}), added {{ record.created_at|date:"Y-m-d" }}.</p>
+  <p class="msg warning" role="alert">{{ report.summary }}</p>
+  <ul>
+    <li>The record and its text are removed.</li>
+    {% if record.storage_key %}<li>The stored file {{ record.original_filename }} is removed from the server.</li>{% endif %}
+    <li>The requirement keeps its current status. Check the status afterward.</li>
+  </ul>
+  <form method="post">{% csrf_token %}<button class="danger" type="submit">Delete evidence</button>
+  <a href="{% url 'progress_detail' progress.pk %}">Cancel</a></form>
+</div>
+{% endblock %}

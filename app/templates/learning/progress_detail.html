@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load req_tags %}
+{% block title %}Requirement {{ node.display_number }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'plan_detail' plan.pk %}">{{ plan.title }}</a>{% if parent_progress_id %} / <a href="{% url 'progress_detail' parent_progress_id %}">{{ node.parent.display_number|default:"parent" }}</a>{% endif %}</p>
+<h1>Requirement {{ node.display_number }}</h1>
+<div class="stack">
+  {% if not plan_open %}<p class="msg warning">This plan is {{ plan.get_status_display|lower }}. You can read it, but not change it.</p>{% endif %}
+  {% if plan.status != 'active' and plan_open %}<p class="msg warning">This plan is {{ plan.get_status_display|lower }}. Start or resume it to change the status.</p>{% endif %}
+
+  <section class="card stack" aria-labelledby="s1">
+    <h2 id="s1">1. Requirement text</h2>
+    <blockquote class="req-text">{{ node.text|linebreaksbr }}</blockquote>
+    <p>
+      {% if node.text_origin == 'official_source' %}<span class="badge official">Official text</span>
+      {% else %}<span class="badge">Not official text: {{ node.get_text_origin_display|lower }}</span>{% endif %}
+      {% if node.source %}Source: {{ node.source.title }} ({{ node.source.get_review_status_display|lower }}).{% endif %}
+      Version {{ version.version_label }}, content review: {{ version.get_source_status_display|lower }}.
+    </p>
+    {% if node.completion_logic != 'single' %}<p class="logic">{{ node|logic_label }}</p>{% endif %}
+    {% if node.safety_notes %}<p><strong>Safety:</strong> {{ node.safety_notes }}</p>{% endif %}
+    {% if node.estimated_effort %}<p>Estimate (not part of the requirement): {{ node.estimated_effort }}</p>{% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="s2">
+    <h2 id="s2">2. Interpretation</h2>
+    <p><span class="badge">Explanatory, not official</span></p>
+    <p>No plain-language explanation has been written for this requirement yet.
+    When one exists, it will be shown here. It will never replace the requirement text above.</p>
+  </section>
+
+  <section class="card stack" aria-labelledby="s3">
+    <h2 id="s3">3. Learn</h2>
+    <p>No learning resources have been added yet. Reading or watching something helps you prepare.
+    It does not complete this requirement.</p>
+  </section>
+
+  <section class="card stack" aria-labelledby="s4">
+    <h2 id="s4">4. Demonstrate or complete</h2>
+    {% if leaf %}
+    <p><strong>What the requirement asks you to do:</strong></p>
+    {% for tag, text in guidance %}
+      <p>{% if tag %}<span class="badge">{{ tag|capfirst }}</span> {% endif %}{{ text }}</p>
+    {% endfor %}
+    <p>These prompts help you. They do not add anything to the requirement text.</p>
+    {% if counting_types %}<p>Evidence types that support this requirement: {{ counting_types|join:", " }}.</p>{% endif %}
+    {% if node.evidence_expectations %}<p>Suggested evidence: {{ node.evidence_expectations|join:", " }}. This is a suggestion only.</p>{% endif %}
+    {% if evidence_problem %}<p class="msg warning">{{ evidence_problem }}</p>{% endif %}
+    {% else %}
+    <p>This is a group. You complete it by completing the requirements inside it.</p>
+    {% endif %}
+    {% if children %}
+    <h3>Parts</h3>
+    <ul>
+      {% for c in children %}<li>{{ c.node.display_number }}
+        {% if c.progress %}<a href="{% url 'progress_detail' c.progress.pk %}">{{ c.node.text|truncatechars:100 }}</a>{% else %}{{ c.node.text|truncatechars:100 }}{% endif %}
+        <span class="badge">{% if c.leaf %}{{ c.progress.get_status_display }}{% else %}{{ c.state_label }}{% endif %}</span></li>{% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="s5">
+    <h2 id="s5">5. Evidence and notes</h2>
+    <h3>Evidence</h3>
+    {% if evidence %}
+    <ul>
+      {% for e in evidence %}
+      <li>
+        <strong>{{ e }}</strong> <span class="badge">{{ e.get_evidence_type_display }}</span>
+        <span class="badge {% if e.review_status == 'human_observed' %}official{% endif %}">{{ e.get_review_status_display }}</span>
+        {% if e.review_status == 'human_observed' %}Observed by: {{ e.reviewer_name_or_label }}.{% endif %}
+        <div>{{ e.created_at|date:"Y-m-d" }}</div>
+        {% if e.description %}<div>{{ e.description|linebreaksbr }}</div>{% endif %}
+        {% if e.external_url %}<div><a href="{{ e.external_url }}" rel="noopener noreferrer">{{ e.external_url }}</a></div>{% endif %}
+        <div class="controls">
+          {% if e.storage_key %}<a class="button secondary" href="{% url 'evidence_download' e.pk %}">Download {{ e.original_filename }}</a>{% endif %}
+          {% if e.review_status != 'human_observed' %}<a class="button secondary" href="{% url 'evidence_observe' e.pk %}">Record that a person observed this</a>{% endif %}
+          <a class="button secondary" href="{% url 'evidence_delete' e.pk %}">Delete</a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}<p>No evidence yet.</p>{% endif %}
+    {% if plan_open %}
+    <p class="actions">
+      <a class="button" href="{% url 'evidence_add' progress.pk 'text' %}">Add a note or text</a>
+      <a class="button" href="{% url 'evidence_add' progress.pk 'link' %}">Add a link</a>
+      <a class="button" href="{% url 'evidence_add' progress.pk 'file' %}">Upload a file</a>
+      {% if can_log %}<a class="button" href="{% url 'evidence_add' progress.pk 'timelog' %}">Add a time log entry</a>{% endif %}
+    </p>
+    {% endif %}
+
+    <h3>Your notes</h3>
+    <form method="post" action="{% url 'progress_notes' progress.pk %}">{% csrf_token %}
+      {% include "catalog/_form_fields.html" with form=notes_form %}
+      <button type="submit">Save notes</button>
+    </form>
+
+    <h3>Prior knowledge and prior work</h3>
+    <p class="msg warning">This does not complete the requirement. It is a claim and a note. You still need to do what the requirement asks and mark it complete.</p>
+    <form method="post" action="{% url 'progress_prior' progress.pk %}">{% csrf_token %}
+      {% include "catalog/_form_fields.html" with form=prior_form %}
+      <button type="submit">Save prior knowledge</button>
+    </form>
+
+    {% if leaf %}
+    <h3>Your own statement</h3>
+    {% if progress.self_attested_at %}
+      <p>You stated on {{ progress.self_attested_at|date:"Y-m-d" }} that you did this requirement yourself.</p>
+      <form method="post" action="{% url 'progress_attest' progress.pk %}">{% csrf_token %}<input type="hidden" name="attested" value="0"><button class="secondary" type="submit">Remove my statement</button></form>
+    {% else %}
+      <p>If you did this and have no evidence to keep, you can say so. This is only your word. It is not evidence, and no one else has checked it.</p>
+      <form method="post" action="{% url 'progress_attest' progress.pk %}">{% csrf_token %}<input type="hidden" name="attested" value="1"><button class="secondary" type="submit">I did this requirement myself</button></form>
+    {% endif %}
+    {% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="s6">
+    <h2 id="s6">6. Progress</h2>
+    {% if leaf %}
+      <p>Status: <span class="badge">{{ progress.get_status_display }}</span>
+      {% if progress.personally_completed_at %}Completed {{ progress.personally_completed_at|date:"Y-m-d" }}.{% endif %}
+      {% if blocked %}<span class="badge warn">Waiting for an earlier requirement</span>{% endif %}</p>
+      {% if status_form %}
+      <form method="post" action="{% url 'progress_status' progress.pk %}">{% csrf_token %}
+        {% include "catalog/_form_fields.html" with form=status_form %}
+        <button type="submit">Change status</button>
+      </form>
+      {% endif %}
+    {% else %}
+      <p>State: <span class="badge">{{ state_label }}</span></p>
+      {% if outstanding %}<h3>Still outstanding here</h3><ul>{% for m in outstanding %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

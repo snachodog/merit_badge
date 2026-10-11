@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'progress_detail' progress.pk %}">Back to requirement {{ progress.requirement_node.display_number }}</a></p>
+<h1>{{ title }}</h1>
+<div class="card stack">
+  {% if kind == 'file' %}
+  <div class="msg warning">
+    <p><strong>Before you upload:</strong> this file is stored on this self-hosted server, in private storage.
+    It has no public web address. Only you can download it while signed in.</p>
+    <p>Files can contain faces, voices, locations, documents, or other people's details. Upload only what you are willing to store here.
+    You can delete the file later. It is never sent to an outside service. The limit is {{ max_mb }} MB.</p>
+  </div>
+  {% else %}
+  <p>Adding evidence records what you did. It does not complete the requirement.</p>
+  {% endif %}
+  <form method="post" {% if multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+    {% include "catalog/_form_fields.html" %}
+    <button type="submit">Save</button> <a href="{% url 'progress_detail' progress.pk %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

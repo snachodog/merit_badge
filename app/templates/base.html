@@ -45,8 +45,22 @@
     button.danger { background:#b00020; color:#fff; }
     table { border-collapse:collapse; width:100%; } th, td { text-align:left; padding:.3rem .5rem; border-bottom:1px solid var(--line); vertical-align:top; }
     .searchbar { display:flex; gap:.5rem; flex-wrap:wrap; } .searchbar input { flex:1 1 14rem; } .searchbar button { margin:0; }
+    .counts { display:flex; flex-wrap:wrap; gap:.5rem; list-style:none; padding:0; margin:.5rem 0; }
+    .counts li { border:1px solid var(--line); border-radius:.4rem; padding:.3rem .7rem; background:var(--card); }
+    .counts strong { font-size:1.2rem; margin-right:.3rem; }
+    .actions { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
+    .actions form { display:inline; } .actions button { margin:0; }
+    blockquote.req-text { margin:.5rem 0; padding:.5rem .8rem; border-left:4px solid var(--accent); background:var(--card); }
+    .certificate { border:3px double var(--fg); padding:2rem 1.5rem; text-align:center; background:#fff; color:#111; max-width:44rem; margin:1rem auto; }
+    .certificate h1 { font-size:1.8rem; margin:.5rem 0; } .certificate .name { font-size:1.6rem; font-weight:700; margin:.5rem 0; }
+    .certificate dl { text-align:left; display:grid; grid-template-columns:max-content 1fr; gap:.3rem 1rem; margin:1.5rem 0; }
+    .certificate dt { font-weight:700; } .certificate dd { margin:0; }
+    .certificate .disclaimer { border-top:1px solid #777; padding-top:1rem; font-size:.95rem; text-align:left; }
+    @media (max-width:30rem) { .certificate dl { grid-template-columns:1fr; } .certificate dd { margin-bottom:.5rem; } }
+    @media print { header, .skip, .no-print, .msg { display:none !important; } body { background:#fff; color:#000; } main { max-width:none; padding:0; } .certificate { border-color:#000; margin:0 auto; } a { color:inherit; } }
     fieldset { border:1px solid var(--line); } .checks ul { list-style:none; padding:0; columns:2 10rem; } .checks label { display:inline; margin:0; }
   </style>
+  {% block head %}{% endblock %}
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -55,15 +69,18 @@
     {% if user.is_authenticated %}
     <nav aria-label="Main"><ul>
       <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'my_learning' %}">My Learning</a></li>
       <li><a href="{% url 'catalog' %}">Catalog</a></li>
+      <li><a href="{% url 'achievement_list' %}">Achievements</a></li>
       <li><a href="{% url 'program_create' %}">New custom program</a></li>
       <li><a href="{% url 'import_program' %}">Import JSON</a></li>
+      <li><a href="{% url 'settings' %}">Settings</a></li>
     </ul></nav>
     <form method="post" action="{% url 'logout' %}">{% csrf_token %}<span>{{ user.get_username }}</span> <button type="submit">Log out</button></form>
     {% endif %}
   </header>
   <main id="main">
-    {% if messages %}<div role="status">{% for m in messages %}<p class="msg {{ m.level_tag }}">{{ m }}</p>{% endfor %}</div>{% endif %}
+    {% if messages %}<div role="status">{% for m in messages %}<p class="msg {{ m.level_tag }}"{% if m.level_tag == 'error' %} role="alert"{% endif %}>{{ m }}</p>{% endfor %}</div>{% endif %}
     {% block content %}{% endblock %}
   </main>
 </body>

@@ -15,6 +15,7 @@ Rules enforced here (PLAN.md sections 4.1, 6.8, 6.9, 7.2):
 from dataclasses import dataclass
 
 from django.db import transaction
+from django.db.models import ProtectedError
 from django.utils import timezone
 
 from programs.models import AwardVersion
@@ -100,6 +101,10 @@ def complete_plan(plan, note=""):
     plan.personal_completed_at = now
     plan.save()
     _log(plan, PS.ACTIVE, PS.PERSONALLY_COMPLETED, note or "Personal completion recorded")
+    # The only place an achievement record is made (PLAN.md 6.13).
+    from achievements import services as achievement_services
+
+    achievement_services.record_completion(plan)
     return plan
 
 
@@ -109,7 +114,12 @@ def delete_plan(plan):
     from evidence import services as evidence_services
 
     report = evidence_services.deletion_report_for_plan(plan)
-    plan.delete()  # files are removed after commit by the evidence signal
+    try:
+        plan.delete()  # files are removed after commit by the evidence signal
+    except ProtectedError as exc:
+        raise LearningError(
+            "This plan has an achievement record, so it cannot be deleted."
+        ) from exc
     return report
 
 
@@ -162,6 +172,29 @@ def conditional_keys(version):
         )
         if isinstance(n.condition_expression, dict) and "key" in n.condition_expression
     }
+
+
+def clear_condition_answer(plan, key):
+    """Remove an answer. The condition becomes unresolved again."""
+    answers = dict(plan.condition_answers or {})
+    answers.pop(key, None)
+    plan.condition_answers = answers
+    plan.save(update_fields=["condition_answers", "updated_at"])
+    return plan
+
+
+def condition_options(version):
+    """{key: [allowed values]} from the version's conditional nodes, in a stable order."""
+    options = {}
+    for n in RequirementNode.objects.filter(
+        award_version=version, completion_logic=tree_rules.CONDITIONAL
+    ).order_by("pk"):
+        expr = n.condition_expression
+        if isinstance(expr, dict) and "key" in expr and "equals" in expr:
+            values = options.setdefault(expr["key"], [])
+            if expr["equals"] not in values:
+                values.append(expr["equals"])
+    return options
 
 
 def set_condition_answer(plan, key, value):

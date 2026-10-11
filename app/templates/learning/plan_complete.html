@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Complete plan: {{ plan.title }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'plan_detail' plan.pk %}">Back to the plan</a></p>
+<h1>Record personal completion: {{ plan.title }}</h1>
+<div class="stack">
+  {% include "learning/_summary.html" %}
+  {% if can_complete %}
+  <section class="card stack">
+    <h2>Confirm</h2>
+    <p>The requirement rules are satisfied. If you record completion, the app saves an achievement record for version {{ version.version_label }} and you can print a certificate.</p>
+    <p>This is a personal, unofficial record. It does not confer an official award or rank.</p>
+    <form method="post">{% csrf_token %}<button type="submit">Record personal completion</button></form>
+  </section>
+  {% else %}
+  <p class="msg warning" role="alert">You cannot record completion yet. Finish the outstanding items first.{% if plan.status != 'active' %} The plan must also be active.{% endif %}</p>
+  {% endif %}
+</div>
+{% endblock %}

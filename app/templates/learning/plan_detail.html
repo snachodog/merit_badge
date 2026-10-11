@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ plan.title }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'my_learning' %}">My Learning</a></p>
+<h1>{{ plan.title }}</h1>
+<div class="stack">
+  <p>
+    <span class="badge">{{ plan.get_status_display }}</span>
+    Pinned to version <a href="{% url 'version_detail' version.pk %}">{{ version.version_label }}</a>
+    of {{ version.award.name }}.
+    {% if plan.started_at %}Started {{ plan.started_at|date:"Y-m-d" }}.{% endif %}
+    {% if plan.target_date %}Target date {{ plan.target_date|date:"Y-m-d" }}.{% endif %}
+  </p>
+  {% include "requirements/_banner.html" %}
+  {% if plan.status == 'planned' %}<p class="msg warning">This plan has not started. Resume it to change requirement statuses.</p>{% endif %}
+  {% if plan.status == 'paused' %}<p class="msg warning">This plan is paused. Resume it to change requirement statuses.</p>{% endif %}
+  {% if plan.status == 'abandoned' %}<p class="msg warning">This plan is abandoned. Your notes and evidence are kept. You can resume it.</p>{% endif %}
+  {% if plan.status == 'personally_completed' %}
+    <p class="msg">You recorded personal completion on {{ plan.personal_completed_at|date:"Y-m-d" }}. This is a personal record, not an official award.
+    {% if achievement %}<a href="{% url 'certificate' achievement.pk %}">Open the certificate</a>.{% endif %}</p>
+  {% endif %}
+
+  {% include "learning/_summary.html" %}
+
+  {% if conditions %}
+  <section class="card stack" aria-labelledby="cond-h">
+    <h2 id="cond-h">Questions that decide which requirements apply</h2>
+    <p>Some requirements apply only in certain cases. Answer from your own situation. You can change an answer later.</p>
+    {% for c in conditions %}
+    <form method="post" action="{% url 'plan_condition' plan.pk %}">{% csrf_token %}
+      <input type="hidden" name="key" value="{{ c.key }}">
+      <fieldset>
+        <legend>{{ c.key }}</legend>
+        {% for o in c.options %}
+        <label><input type="radio" name="answer" value="{{ o.index }}" {% if c.answered and c.answer|stringformat:"s" == o.label %}checked{% endif %}> {{ o.label }}</label>
+        {% endfor %}
+        <label><input type="radio" name="answer" value="none" {% if c.answered and c.answer == "(none of the listed values)" %}checked{% endif %}> None of these</label>
+        <label><input type="radio" name="answer" value=""> Clear my answer</label>
+      </fieldset>
+      <button type="submit" class="secondary">Save answer for {{ c.key }}</button>
+    </form>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <section aria-labelledby="tree-h">
+    <h2 id="tree-h">Requirements</h2>
+    <ol class="req-tree">{% for row in tree %}{% include "learning/_plan_row.html" with row=row %}{% endfor %}</ol>
+  </section>
+
+  <section class="card stack" aria-labelledby="act-h">
+    <h2 id="act-h">Plan actions</h2>
+    <div class="actions">
+      {% for a in transitions %}
+      <form method="post" action="{% url 'plan_action' plan.pk a %}">{% csrf_token %}<button class="secondary" type="submit">{{ a|capfirst }}</button></form>
+      {% endfor %}
+      {% if plan.status == 'active' %}<a class="button" href="{% url 'plan_complete' plan.pk %}">Review and complete</a>{% endif %}
+    </div>
+    {% if plan.status == 'active' and not can_complete %}
+    <p>You can record personal completion only after every required item is done. See "Still outstanding".</p>
+    {% endif %}
+  </section>
+
+  <section aria-labelledby="log-h">
+    <h2 id="log-h">History</h2>
+    <ul>{% for l in status_log %}<li>{{ l.changed_at|date:"Y-m-d H:i" }}: {{ l.to_status }}{% if l.note %} ({{ l.note }}){% endif %}</li>{% endfor %}</ul>
+  </section>
+</div>
+{% endblock %}

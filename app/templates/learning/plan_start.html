@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Start plan: {{ award.name }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'version_detail' version.pk %}">Back to the version</a></p>
+<h1>Start a plan: {{ award.name }}, version {{ version.version_label }}</h1>
+<div class="stack">
+  {% include "requirements/_banner.html" %}
+  {% if existing %}
+  <p class="msg warning">You already have a plan for this version:
+  {% for p in existing %}<a href="{% url 'plan_detail' p.pk %}">{{ p.title }} ({{ p.get_status_display|lower }})</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
+  You can start another one.</p>
+  {% endif %}
+  <section aria-labelledby="sum-h">
+    <h2 id="sum-h">What this plan requires</h2>
+    <p>This version has {{ requirement_count }} requirement{{ requirement_count|pluralize }}, shown below.
+    Your plan stays on this exact version, even if a newer version appears later.</p>
+    {% if tree %}<ol class="req-tree">{% for item in tree %}{% include "requirements/_node.html" with item=item %}{% endfor %}</ol>
+    {% else %}<p class="msg warning">This version has no requirements. It cannot be completed.</p>{% endif %}
+  </section>
+  <section class="card" aria-labelledby="start-h">
+    <h2 id="start-h">Start</h2>
+    <form method="post">{% csrf_token %}
+      {% include "catalog/_form_fields.html" %}
+      <button type="submit">Start plan</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

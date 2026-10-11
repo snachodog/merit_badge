@@ -1,0 +1,14 @@
+<li class="req">
+  <div>
+    <span class="num">{{ row.node.display_number }}</span>
+    {% if row.progress %}<a href="{% url 'progress_detail' row.progress.pk %}">{{ row.node.text|truncatechars:140 }}</a>
+    {% else %}{{ row.node.text|truncatechars:140 }}{% endif %}
+    <span class="badge {% if row.key == 'personally_completed' or row.key == 'complete' %}official{% elif row.key == 'unresolved' or row.key == 'needs_more_work' %}warn{% endif %}">{{ row.label }}</span>
+    {% if row.blocked %}<span class="badge warn">Waiting for an earlier requirement</span>{% endif %}
+  </div>
+  {% if row.children %}
+  <ol aria-label="Parts of {{ row.node.display_number|default:'this requirement' }}">
+    {% for child in row.children %}{% include "learning/_plan_row.html" with row=child %}{% endfor %}
+  </ol>
+  {% endif %}
+</li>

@@ -29,6 +29,13 @@ def _check_owner(user, progress):
         raise PermissionDenied("This requirement belongs to another account.")
 
 
+def _check_plan_open(progress):
+    from learning.models import LearningPlan as P
+
+    if progress.learning_plan.status in (P.Status.ABANDONED, P.Status.ARCHIVED, P.Status.PERSONALLY_COMPLETED):
+        raise EvidenceError("This plan is closed, so you cannot add evidence to it.")
+
+
 def _check_record_owner(user, record):
     _check_owner(user, record.progress)
 
@@ -38,6 +45,7 @@ def add_text_evidence(
 ):
     """Add evidence that has no file. File types go through `add_file_evidence`."""
     _check_owner(user, progress)
+    _check_plan_open(progress)
     if evidence_type in EvidenceRecord.FILE_TYPES:
         raise EvidenceError("Use the file upload for file, image, audio and video evidence.")
     if evidence_type not in ET.values:
@@ -58,9 +66,25 @@ def add_text_evidence(
     )
 
 
+def add_time_log(user, progress, *, date, minutes, note=""):
+    """One dated time entry. Several entries can be added to one requirement."""
+    _check_owner(user, progress)
+    _check_plan_open(progress)
+    if not isinstance(minutes, int) or isinstance(minutes, bool) or not 1 <= minutes <= 1440:
+        raise EvidenceError("Minutes must be a whole number from 1 to 1440.")
+    return EvidenceRecord.objects.create(
+        progress=progress,
+        created_by=user,
+        evidence_type=ET.TIME_LOG,
+        title=f"{date.isoformat()}: {minutes} min",
+        description=note,
+    )
+
+
 def add_file_evidence(user, progress, uploaded, *, title="", description=""):
     """Validate and store an uploaded file under a generated name."""
     _check_owner(user, progress)
+    _check_plan_open(progress)
     try:
         ext, evidence_type, content_type = validate_upload(uploaded)
     except UploadError as exc:

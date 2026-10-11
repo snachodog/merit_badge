@@ -1,0 +1,18 @@
+<section class="card stack" aria-labelledby="sum-h">
+  <h2 id="sum-h">Where you stand</h2>
+  <ul class="counts">
+    {% for label, n in counts %}<li><strong>{{ n }}</strong>{{ label }}</li>{% endfor %}
+  </ul>
+  <p>{{ summary.requirements_complete }} of {{ summary.requirements_total }} single requirements that apply to you are personally completed.
+  This is a count, not a percentage. It comes from the requirement rules, and you cannot edit it.
+  A high count does not mean the plan is complete if a required item is still open.</p>
+  {% if summary.unresolved %}<p class="msg warning">{{ summary.unresolved }} condition{{ summary.unresolved|pluralize }} still need{{ summary.unresolved|pluralize:"s," }} your answer. Until you answer, the plan cannot be complete.</p>{% endif %}
+  <h3>Still outstanding</h3>
+  {% if outstanding %}
+  <ul>
+    {% for o in outstanding %}
+    <li>{% if o.progress_id %}<a href="{% url 'progress_detail' o.progress_id %}">{{ o.message }}</a>{% else %}{{ o.message }}{% endif %}{% if o.blocked %} (waiting for an earlier requirement){% endif %}</li>
+    {% endfor %}
+  </ul>
+  {% else %}<p>Nothing is outstanding. The requirement rules are satisfied.</p>{% endif %}
+</section>
