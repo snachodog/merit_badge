@@ -1,0 +1,12 @@
+[project]
+name = "merit-badge"
+version = "0.1.0"
+description = "Private, self-hosted personal achievement and learning platform"
+requires-python = ">=3.11"
+# Runtime dependencies are pinned in requirements.txt; dev/test in requirements-dev.txt.
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+pythonpath = ["app"]
+testpaths = ["tests"]
+addopts = "-ra"

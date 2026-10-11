@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Merit Badge{% endblock %}</title>
+  <style>
+    :root { color-scheme: light dark; --fg:#1b1b1b; --bg:#fafafa; --accent:#1f5f3f; --card:#fff; --line:#d0d0d0; }
+    @media (prefers-color-scheme: dark) { :root { --fg:#eee; --bg:#161616; --accent:#6fcf97; --card:#222; --line:#444; } }
+    * { box-sizing: border-box; }
+    body { margin:0; font:1rem/1.5 system-ui,sans-serif; color:var(--fg); background:var(--bg); }
+    header { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:space-between; align-items:center; padding:.75rem 1rem; border-bottom:1px solid var(--line); }
+    main { max-width:42rem; margin:0 auto; padding:1rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:.5rem; padding:1rem; }
+    label { display:block; margin-top:.75rem; }
+    input { width:100%; padding:.6rem; font:inherit; }
+    button { margin-top:1rem; padding:.6rem 1rem; font:inherit; background:var(--accent); color:var(--bg); border:0; border-radius:.3rem; cursor:pointer; }
+    header button { margin:0; background:none; color:var(--accent); border:1px solid var(--accent); }
+    .errorlist { color:#b00020; padding-left:1.2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Merit Badge</strong>
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<span>{{ user.get_username }}</span> <button type="submit">Log out</button></form>
+    {% endif %}
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
