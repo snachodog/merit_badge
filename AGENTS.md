@@ -80,3 +80,6 @@ All text written for people follows ISO 24495-1 (see PLAN.md §2.6): docs, UI te
 - **Easy to scan.** Single-topic headings; bullets for three or more items. Do not rely on bold or colour alone for meaning.
 - **Give the next action.** Exact commands, paths, and parameters.
 - **Exemptions.** Code, commands, logs, diffs, and quoted files stay unaltered. Official requirement text is reproduced exactly. Technical accuracy outranks style.
+
+## No bylines
+Do not add bylines or attribution to anything. This covers `Co-Authored-By` and `Claude-Session` trailers in commits, and "Generated with" lines or session links in pull request descriptions. Commit messages contain only the Conventional Commits message.
