@@ -9,8 +9,8 @@ A self-hosted, single-user web app for working through requirement-based program
 
 ## Current scope
 
-- Work one roadmap phase at a time. **Only Phase 1** (`PLAN.md` §16) is in scope now. Phase 0 is done.
-- Do not start a later phase or build AI features until the owner reviews Phase 1 and approves.
+- Work one roadmap phase at a time. **Only Phase 2** (`PLAN.md` §16) is in scope now. Phases 0 and 1 are done.
+- Do not start a later phase or build AI features until the owner reviews Phase 2 and approves.
 - Record proposed additions as follow-up items instead of building them.
 
 ## Non-negotiable constraints (`PLAN.md` §0.2)
