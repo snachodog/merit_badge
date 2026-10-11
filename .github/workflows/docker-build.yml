@@ -13,6 +13,8 @@ env:
 jobs:
   build-push:
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
     env:
       NTFY_URL: ${{ secrets.NTFY_URL }}
       NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
@@ -39,13 +41,14 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=ref,event=branch
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix=sha-
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -77,3 +80,44 @@ jobs:
             -H "Priority: high" \
             -H "Tags: x" \
             -d "Build failed on ${{ github.ref_name }} — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  release:
+    name: Create GitHub release
+    needs: build-push
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/merit_badge
+          DIGEST: ${{ needs.build-push.outputs.digest }}
+        run: |
+          version="${TAG#v}"
+          # Release notes: the matching CHANGELOG.md section, if there is one.
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]" { found=1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then echo "See CHANGELOG.md." > notes.md; fi
+          {
+            echo
+            echo "## Docker image"
+            echo
+            echo '```'
+            echo "docker pull ${IMAGE}:${version}"
+            echo '```'
+            echo
+            echo "Digest: \`${DIGEST}\`"
+          } >> notes.md
+          # Versions 0.x are pre-releases until the MVP is done.
+          flags=""
+          case "$version" in 0.*) flags="--prerelease" ;; esac
+          gh release create "$TAG" --title "$TAG" --notes-file notes.md $flags
