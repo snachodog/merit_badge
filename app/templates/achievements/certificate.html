@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Certificate: {{ record.display_title }}{% endblock %}
+{% block content %}
+<p class="no-print actions"><a href="{% url 'achievement_list' %}">Achievements</a>
+<button type="button" onclick="window.print()">Print this page</button></p>
+<article class="certificate" aria-labelledby="cert-h">
+  <p>Personal learning record, unofficial</p>
+  <h1 id="cert-h">{{ record.display_title }}</h1>
+  <p>recorded for</p>
+  <p class="name">{{ record.learner_display_name }}</p>
+  <dl>
+    <dt>Program</dt><dd>{{ record.program_name }}</dd>
+    <dt>Achievement</dt><dd>{{ record.display_title }}</dd>
+    <dt>Requirements version</dt><dd>{{ record.requirement_version_label }}{% if version.published_at %}, published {{ version.published_at|date:"Y-m-d" }}{% endif %}{% if version.effective_from or version.effective_until %}; effective {{ version.effective_from|date:"Y-m-d"|default:"date not known" }} to {{ version.effective_until|date:"Y-m-d"|default:"date not known" }}{% endif %}</dd>
+    <dt>Personal completion</dt><dd>{{ record.completed_at|date:"Y-m-d" }}</dd>
+    <dt>What this record shows</dt><dd>The learner recorded that they completed the requirements of this version. Basis: {{ record.get_completion_basis_display|lower }}.</dd>
+    <dt>Issued by</dt><dd>{{ record.issuer_name }}</dd>
+  </dl>
+  <p class="disclaimer"><strong>Not an official award.</strong> {{ disclaimer }}</p>
+  <p class="disclaimer"><small>Wording version {{ record.disclaimer_text_version }}.</small></p>
+</article>
+{% endblock %}
