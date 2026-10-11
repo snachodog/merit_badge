@@ -5,6 +5,9 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+### Fixed
+- `bootstrap_admin` now says when an existing user keeps its password, and has `--reset-password` to set a new one (issue #1).
+
 ## [0.3.1] - 2026-10-11
 
 ### Added

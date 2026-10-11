@@ -43,6 +43,9 @@ docker compose run --rm \
   web python manage.py bootstrap_admin
 ```
 
+If the user already exists, the command does not change the password. To set a new one, add
+`--reset-password` to the command.
+
 Then log in at `/accounts/login/`. Further users can be added in the Django admin
 at `/admin/`. Avoid leaving `BOOTSTRAP_ADMIN_PASSWORD` in `.env` after use.
 

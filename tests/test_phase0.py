@@ -60,3 +60,16 @@ def test_bootstrap_admin_idempotent(monkeypatch):
     call_command("bootstrap_admin")
     call_command("bootstrap_admin")
     assert get_user_model().objects.filter(username="boss", is_superuser=True).count() == 1
+
+
+def test_bootstrap_admin_keeps_password_unless_reset(monkeypatch):
+    monkeypatch.setenv("BOOTSTRAP_ADMIN_USERNAME", "boss2")
+    monkeypatch.setenv("BOOTSTRAP_ADMIN_PASSWORD", "first-pw-for-tests-1")
+    call_command("bootstrap_admin")
+    monkeypatch.setenv("BOOTSTRAP_ADMIN_PASSWORD", "second-pw-for-tests-2")
+    call_command("bootstrap_admin")
+    user = get_user_model().objects.get(username="boss2")
+    assert user.check_password("first-pw-for-tests-1")
+    call_command("bootstrap_admin", "--reset-password")
+    user.refresh_from_db()
+    assert user.check_password("second-pw-for-tests-2")
