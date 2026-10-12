@@ -35,8 +35,8 @@ Do not generate an entire application blindly if a repository already exists. If
 - The primary client is a browser-based website. Do not build native mobile or desktop apps.
 - Docker Compose is the supported deployment path.
 - Core features must work without an external AI API.
-- Do not require analytics, advertising, telemetry, social logins, or other SaaS services.
-- Do not implement public registration, public profiles, social feeds, leaderboards, marketplaces, or community features unless explicitly requested later.
+- Do not require analytics, advertising, telemetry, social logins, or other SaaS services. Optional OIDC sign-in against a provider the owner runs or chooses is allowed (Phase 3b). Consumer social providers such as Google and Facebook stay out of scope.
+- Do not implement public registration (invitation-only sign-up is allowed, Phase 3b), public profiles, social feeds, leaderboards, marketplaces, or community features unless explicitly requested later.
 - Do not invent, paraphrase as authoritative, or silently alter official requirements.
 - Do not scrape or republish program content in the repository, in container images, in seed data, or in any shipped or shared build, unless the source and applicable permissions allow it. Exception: for local, internal testing only, the owner may place requirement text in the gitignored `source_reqs/` folder (see Section 11.1).
 - Do not claim that the app confers official Scouting America or another organization's awards.
@@ -946,7 +946,7 @@ Do not imitate official award graphics, insignia, signatures, or certificates wi
 
 ## 13.1 Single-user-first design
 
-The initial deployment is for one primary user. Use standard authenticated user records and permissions so that a future second-user mode is possible, but do not build social or collaboration features in the MVP.
+The initial deployment is for one primary user. Multi-user use is supported by invitation (Phase 3b) with admin and user roles. Each user's plans and evidence stay private to them. Do not build social or collaboration features.
 
 No public self-registration by default. A private instance should be accessible only to authorized users.
 
@@ -1219,7 +1219,7 @@ Owner-requested addition. It ships before Phase 4.
 
 ## Phase 3b: Users, OIDC sign-in, and invitations
 
-Owner-requested addition. It extends §13.1 (single-user-first) and needs the plan changes listed below. Do not build it until the owner confirms them.
+Owner-requested addition. The owner confirmed the plan changes listed below on 2026-10-11. It ships after Phase 3a.
 
 **Deliverables**
 
@@ -1243,7 +1243,7 @@ Owner-requested addition. It extends §13.1 (single-user-first) and needs the pl
 - Secrets never appear in logs, exports, or page source.
 - No outside service is required. OIDC is optional and off by default.
 
-**Plan changes the owner must confirm**
+**Plan changes (confirmed, applied in §0.2, §13.1, §17, §18)**
 
 - §0.2 forbids "social logins". Confirm that OIDC against a provider the owner controls is allowed, and that Google, Facebook, and similar providers stay out of scope.
 - §0.2 forbids public registration unless explicitly requested. Confirm that invitation-only sign-up is the request, and that open registration stays off.
@@ -1322,7 +1322,7 @@ The MVP is ready for regular personal use when all of the following are true:
 
 1. It installs and runs through documented Docker Compose commands.
 2. It uses persistent storage for database records and uploaded files.
-3. Access is authenticated and public registration is disabled by default.
+3. Access is authenticated and public registration is disabled by default. Additional users join by invitation only.
 4. The owner can create programs and custom achievements.
 5. Requirements can be nested and can express alternatives and required counts.
 6. The owner can start, pause, resume, and complete a learning plan.
@@ -1350,7 +1350,8 @@ Do not block Phase 0 unless a decision is required to start it. Record decisions
 5. **Evidence file limits:** Set practical file-size limits and allowed types based on the private server's capacity.
 6. **Certificate design:** Use a modest, printable personal record rather than imitating official award graphics.
 7. **Historical seed data:** Choose initial years and awards only after reliable source material is identified.
-8. **Multi-user support:** Keep the data model reasonably extensible, but defer public registration and sharing features until specifically requested.
+8. **Multi-user support:** Decided: invitation-only multi-user with admin and user roles (Phase 3b). Public registration and sharing features stay deferred.
+9. **OIDC settings:** Decide where settings live (database or environment), which library to use, and whether users may link an OIDC identity to a password account. Record the choice in an ADR.
 
 ---
 

@@ -17,8 +17,8 @@ A self-hosted, single-user web app for working through requirement-based program
 
 - Self-hosted; no vendor-hosted service required. Docker Compose is the supported deployment path.
 - Browser-based website only. No native mobile or desktop apps.
-- Core features must work without an external AI API. No analytics, ads, telemetry, or social logins.
-- No public registration, profiles, feeds, leaderboards, marketplaces, or community features.
+- Core features must work without an external AI API. No analytics, ads, telemetry, or consumer social logins. Optional OIDC against a provider the owner runs is allowed (Phase 3b).
+- No public registration (invitation-only sign-up is allowed), profiles, feeds, leaderboards, marketplaces, or community features.
 - Do not invent, paraphrase as authoritative, or silently alter official requirements.
 - `source_reqs/` is a local-only, gitignored scratch folder of requirement text for internal testing. Never commit it, bake it into an image, or ship it in seed data.
 - Never claim official Scouting America (or other organization) recognition.
