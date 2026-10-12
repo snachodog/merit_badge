@@ -23,4 +23,10 @@ if [ -n "${BOOTSTRAP_ADMIN_USERNAME:-}" ] && [ -n "${BOOTSTRAP_ADMIN_PASSWORD:-}
   python manage.py bootstrap_admin || echo "bootstrap_admin failed; continuing" >&2
 fi
 
+# Add the tutorial plan. Safe to repeat: it never changes a published version or progress.
+# Set SEED_TUTORIAL=false to skip it.
+if [ "${SEED_TUTORIAL:-true}" = "true" ] && [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
+  python manage.py seed_tutorial || echo "seed_tutorial failed; continuing" >&2
+fi
+
 exec "$@"

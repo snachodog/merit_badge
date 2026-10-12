@@ -3,6 +3,14 @@
 <div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
   <h1 class="card-title text-2xl">Welcome, {{ user.get_username }}</h1>
   <p>Your private achievement and learning platform is running.</p>
+  <div class="alert alert-info flex-col items-start gap-1" role="note">
+    <p><strong>New here?</strong> Take the short tour to learn the app by using it.</p>
+    {% if tutorial_version %}
+    <p><a class="btn btn-primary btn-sm" href="{% url 'version_detail' tutorial_version.pk %}">Open "How to use Merit Badge"</a></p>
+    {% else %}
+    <p>The tutorial is not loaded yet. Run <code>docker compose exec web python manage.py seed_tutorial</code>, then reload this page.</p>
+    {% endif %}
+  </div>
   <ul>
     <li><a href="{% url 'my_learning' %}">My Learning: your plans and progress</a></li>
     <li><a href="{% url 'achievement_list' %}">Achievements: your personal completion records</a></li>

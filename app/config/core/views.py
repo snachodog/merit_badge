@@ -30,7 +30,15 @@ def healthz(request):
 
 @login_required
 def home(request):
-    return render(request, "home.html")
+    from programs import tutorial
+    from programs.models import AwardVersion
+
+    tutorial_version = AwardVersion.objects.filter(
+        award__program__owner__slug=tutorial.OWNER_SLUG,
+        award__slug=tutorial.AWARD_SLUG,
+        status=AwardVersion.Status.PUBLISHED,
+    ).first()
+    return render(request, "home.html", {"tutorial_version": tutorial_version})
 
 
 # Settings and export ---------------------------------------------------------------

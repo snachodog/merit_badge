@@ -308,6 +308,18 @@ and has no recognition from Scouting America.
   `catalog_validated_complete` on the program, set the expected entry count, and every entry is
   published and reviewed. Otherwise the app must say "Incomplete catalog coverage".
 
+## Tutorial
+
+The web container adds a tutorial plan, "How to use Merit Badge", when it starts. Open it from the
+home page. It is written by this project, is unofficial, and is not part of the Scouting catalog
+coverage. To skip it, set `SEED_TUTORIAL=false` in `.env`. To add it by hand:
+
+```sh
+docker compose exec web python manage.py seed_tutorial
+```
+
+The command is safe to run again. It never changes a published version or your progress.
+
 ## Import from JSON
 
 The format is `docs/schemas/program-import.schema.json` (version 1.0). A small custom
@@ -332,6 +344,17 @@ docker compose run --rm -v "$PWD/docs:/docs:ro" web \
 
 Errors name the place in the file, such as `requirements[2].children[0].text`.
 The importer stores `evidence_expectations` (a list of short text labels) on each requirement. It accepts `constraints` (from `PLAN.md` 14.3) but does not store it yet.
+
+## 1911 Handbook badges
+
+The 57 merit badges of the *Boy Scouts Handbook*, First Edition, 1911 (Project Gutenberg #29558) are in `app/programs/data/handbook_1911/`. The text is historical, not a current or official Scouting America requirement. Many badges are obsolete or unsafe today. You do not need to do anything unsafe. The book is in the US public domain because of its age. Outside the US, check your local law. This is not legal advice (see `docs/decisions/0005-1911-handbook-source.md`).
+
+```sh
+docker compose exec web python manage.py import_handbook_1911 --dry-run
+docker compose exec web python manage.py import_handbook_1911
+```
+
+The command makes draft versions only and is safe to run again. It never publishes. Review each badge against Gutenberg before you publish it. `scripts/convert_1911_handbook.py` rebuilds the files from the Gutenberg HTML.
 
 ## Learning, achievements and export
 
