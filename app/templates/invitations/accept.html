@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Join Merit Badge{% endblock %}
+{% block content %}
+<div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
+  <h1>You were invited to Merit Badge</h1>
+  <p>Choose a username and password to create your account.</p>
+  <form method="post" class="max-w-sm">{% csrf_token %}
+    {% include "catalog/_form_fields.html" %}
+    <button type="submit" class="btn btn-primary mt-4">Create account</button>
+  </form>
+  {% include "invitations/_oidc_option.html" %}
+</div>
+{% endblock %}

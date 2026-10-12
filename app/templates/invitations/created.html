@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Invitation created{% endblock %}
+{% block content %}
+<div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
+  <h1>Invitation created</h1>
+  <p>Copy this link now and send it to the person{% if invitation.label %} ({{ invitation.label }}){% endif %}. This page is the only time the link is shown. If you lose it, revoke the invitation and make a new one.</p>
+  <p>The link works once. It gives the role {{ invitation.get_role_display }} and expires on {{ invitation.expires_at|date:"Y-m-d H:i" }}.</p>
+  <div class="field">
+    <label for="invite-link">Invitation link</label>
+    <input type="text" id="invite-link" readonly value="{{ link }}" class="input input-bordered w-full" onfocus="this.select()">
+  </div>
+  <p class="flex gap-2">
+    <button type="button" class="btn btn-primary" id="copy-link" hidden>Copy link</button>
+    <a class="btn btn-outline" href="{% url 'settings' %}">Back to settings</a>
+  </p>
+  <p id="copy-status" role="status"></p>
+</div>
+<script>
+(function () {
+  var b = document.getElementById("copy-link"), i = document.getElementById("invite-link");
+  if (!b || !navigator.clipboard) { return; }
+  b.hidden = false;
+  b.addEventListener("click", function () {
+    navigator.clipboard.writeText(i.value).then(function () {
+      document.getElementById("copy-status").textContent = "Link copied.";
+    }, function () { i.select(); });
+  });
+})();
+</script>
+{% endblock %}

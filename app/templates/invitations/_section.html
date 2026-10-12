@@ -1,0 +1,30 @@
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="inv-h">
+  <h2 id="inv-h">Invitations</h2>
+  <p>An invitation link lets one person create an account. It works once and expires. You see the full link only once, right after you create it.</p>
+  <form method="post" action="{% url 'invitation_create' %}">{% csrf_token %}
+    {% include "catalog/_form_fields.html" %}
+    <button type="submit" class="btn btn-primary">Create invitation</button>
+  </form>
+  {% if invitations %}
+  <div class="overflow-x-auto">
+    <table class="table table-sm">
+      <caption class="sr-only">Invitations</caption>
+      <thead><tr><th scope="col">Note</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Expires</th><th scope="col">Used by</th><th scope="col">Actions</th></tr></thead>
+      <tbody>
+      {% for i in invitations %}
+        <tr>
+          <th scope="row">{{ i.label|default:"-" }}</th>
+          <td>{{ i.get_role_display }}</td>
+          <td>{{ i.status|capfirst }}</td>
+          <td>{{ i.expires_at|date:"Y-m-d H:i" }}</td>
+          <td>{% if i.used_by %}{{ i.used_by.get_username }}{% elif i.used_at %}(deleted user){% else %}-{% endif %}</td>
+          <td>{% if i.status == "active" %}
+            <form method="post" action="{% url 'invitation_revoke' i.pk %}">{% csrf_token %}<button type="submit" class="btn btn-sm btn-outline btn-warning">Revoke</button></form>
+          {% else %}-{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<p>No invitations yet.</p>{% endif %}
+</section>
