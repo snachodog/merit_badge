@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.6.0] - 2026-10-12
 ### Added
 - Sign in with OIDC (Authentik, Keycloak and others). Admins set it up in Settings > OIDC. It uses PKCE and checks the ID token. It never creates an account by itself: people link it through an invitation or in Settings. Password sign-in always works. New `OIDC_*` variables can pre-fill the settings.
 - Invitations: an admin creates a single-use link in Settings, picks the role and the expiry (1 to 30 days, default 7), and sees the link once. The link is stored only as a hash. The person opens it, picks a username and password, and is signed in. Admins can revoke links. Invitation events are audited.
