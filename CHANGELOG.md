@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.4.0] - 2026-10-11
 ### Changed
 - New interface built with Tailwind CSS 4 and DaisyUI 5 (light and dark themes, collapsing navbar). CSS is built in a Docker `css` stage with the Tailwind standalone CLI. No CDN, no Node.js at runtime. See `docs/decisions/0004-daisyui-tailwind.md`.
 
