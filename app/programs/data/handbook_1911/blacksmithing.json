@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "import_key": "boy-scouts-of-america-historical/boy-scouts-handbook-1911/blacksmithing/1911 first edition",
+  "program": {
+    "slug": "boy-scouts-handbook-1911",
+    "name": "Boy Scouts Handbook 1911",
+    "owner": {
+      "slug": "boy-scouts-of-america-historical",
+      "name": "Boy Scouts of America (historical)",
+      "owner_type": "organization"
+    },
+    "program_type": "historical",
+    "description": "The merit badges in the Boy Scouts Handbook, First Edition, 1911 (Boy Scouts of America), as printed then. Historical 1911 text, not a current or official Scouting America requirement. Many of these badges are obsolete or unsafe today. You do not need to do anything unsafe. Ask a trusted adult before you try any requirement, and skip what you cannot do safely. The wording, spelling and punctuation are kept as printed. This app is unofficial and is not recognized by Scouting America. Source: Project Gutenberg eBook #29558. The book is in the US public domain because of its age. If you live outside the US, check your local law.",
+    "is_custom": true
+  },
+  "award": {
+    "slug": "blacksmithing",
+    "name": "Blacksmithing",
+    "award_type": "merit_badge",
+    "description": "To obtain a merit badge for Blacksmithing a scout must\n\nHistorical 1911 text, not a current or official Scouting America requirement. Many 1911 badges are obsolete or unsafe today. You do not need to do anything unsafe.",
+    "category": "1911 merit badge"
+  },
+  "version": {
+    "label": "1911 first edition",
+    "status": "draft",
+    "source_status": "unverified",
+    "rights_status": "public_domain",
+    "effective_from": "1911-01-01",
+    "effective_until": "1911-12-31",
+    "source_checked_at": "2026-10-11",
+    "change_summary": "Converted by scripts/convert_1911_handbook.py from Project Gutenberg eBook #29558 (release date 2009-08-01). Awaits a badge-by-badge owner review. Historical 1911 text, not a current or official Scouting America requirement."
+  },
+  "sources": [
+    {
+      "key": "gutenberg-29558",
+      "title": "Boy Scouts Handbook, First Edition, 1911 (Project Gutenberg eBook #29558, released 2009-08-01)",
+      "publisher_or_creator": "Boy Scouts of America (1911); Project Gutenberg (2009 eBook)",
+      "url": "https://www.gutenberg.org/cache/epub/29558/pg29558-images.html",
+      "source_type": "other",
+      "license_or_permission_notes": "Published in 1911 (copyright notice: Copyright 1911 by Boy Scouts of America). In the public domain in the United States because of its age. Project Gutenberg says readers outside the US must check local law. This is a record of the project's research, not legal advice. See docs/decisions/0005-1911-handbook-source.md. Edition: 1911 first edition. Historical 1911 text, not a current or official Scouting America requirement.",
+      "attribution_requirements": "Source: Project Gutenberg eBook #29558. Copyright 1911 by Boy Scouts of America.",
+      "review_status": "unreviewed"
+    }
+  ],
+  "requirements": [
+    {
+      "display_number": "1",
+      "text": "Upset and weld a one-inch iron rod.",
+      "text_origin": "other",
+      "source": "gutenberg-29558"
+    },
+    {
+      "display_number": "2",
+      "text": "Make a horseshoe.",
+      "text_origin": "other",
+      "source": "gutenberg-29558"
+    },
+    {
+      "display_number": "3",
+      "text": "Know how to tire a wheel, use a sledge-hammer and forge, shoe a horse correctly and roughshoe a horse.",
+      "text_origin": "other",
+      "source": "gutenberg-29558"
+    },
+    {
+      "display_number": "4",
+      "text": "Be able to temper iron and steel.",
+      "text_origin": "other",
+      "source": "gutenberg-29558"
+    }
+  ]
+}

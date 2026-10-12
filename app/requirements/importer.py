@@ -15,7 +15,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import date, datetime, timezone as dt_timezone
 
 from django.db import transaction
 from django.utils import timezone
@@ -200,7 +200,7 @@ def _parse_when(value):
     else:
         parsed = datetime.combine(date.fromisoformat(value), datetime.min.time())
     if timezone.is_naive(parsed):
-        parsed = timezone.make_aware(parsed, timezone.utc)
+        parsed = timezone.make_aware(parsed, dt_timezone.utc)
     return parsed
 
 
