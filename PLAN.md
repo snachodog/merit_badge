@@ -1217,6 +1217,40 @@ Owner-requested addition. It ships before Phase 4.
 - Import with the dry-run importer first. Publish only after the owner reviews the result.
 - Test that the count of imported badges matches the count in the source, and that no text was changed.
 
+## Phase 3b: Users, OIDC sign-in, and invitations
+
+Owner-requested addition. It extends §13.1 (single-user-first) and needs the plan changes listed below. Do not build it until the owner confirms them.
+
+**Deliverables**
+
+- Two roles: **admin** and **user**. The first user is an admin. Only an admin can manage users, OIDC settings, invitations, and instance settings. A user sees only their own plans, evidence, and achievements. Admins do not see other users' private evidence.
+- Settings tab sections:
+  - **OIDC**: enable or disable, issuer URL, client ID, client secret, scopes, and a button label. The secret is write-only in the UI. Settings are stored in the database or `.env` (decide in an ADR) and documented in `.env.example` and the README. Password sign-in stays available, so a wrong OIDC setting never locks you out.
+  - **Users** (admin only): list users, change role, deactivate or reactivate a user, and reset a password. At least one active admin must always remain.
+  - **Invitations** (admin only): create, list, copy, and revoke invitation links.
+- Invitation links: single-use, random, expiring, tied to a role. The admin sets the expiry. A link shows no user data. Accepting it creates an account by password or by OIDC sign-in. Revoked, used, and expired links fail with a clear message. There is no public registration page.
+- OIDC sign-in uses the standard authorization-code flow with PKCE against a provider the owner runs or picks, such as Authentik or Keycloak. An OIDC identity links to an existing account only through an invitation or by an admin. It never creates accounts on its own.
+- Audit records for sign-in method changes, role changes, deactivation, and invitation use (§6.14).
+- Data export and deletion (§13.3) work per user.
+
+**Exit criteria**
+
+- An admin can invite a second person and that person can sign in by password or OIDC.
+- A user cannot reach admin pages, other users' data, or other users' evidence files. Tests cover each.
+- OIDC can be turned off and password sign-in still works.
+- The last active admin cannot be deleted, demoted, or deactivated.
+- Invitation tokens are stored hashed, expire, and work once. Tests cover reuse, expiry, and revocation.
+- Secrets never appear in logs, exports, or page source.
+- No outside service is required. OIDC is optional and off by default.
+
+**Plan changes the owner must confirm**
+
+- §0.2 forbids "social logins". Confirm that OIDC against a provider the owner controls is allowed, and that Google, Facebook, and similar providers stay out of scope.
+- §0.2 forbids public registration unless explicitly requested. Confirm that invitation-only sign-up is the request, and that open registration stays off.
+- §13.1 says "single-user-first". Update it to say multi-user is supported by invitation, with no social or collaboration features.
+- §17 acceptance criteria and §18 open decisions need a line each for roles and OIDC settings storage.
+- Open decisions: where OIDC settings live (database or environment), which library to use (for example `mozilla-django-oidc` or `authlib`), and whether users may link an OIDC identity to a password account.
+
 ## Phase 4: AI tutoring and EDGE instruction
 
 **Deliverables**
