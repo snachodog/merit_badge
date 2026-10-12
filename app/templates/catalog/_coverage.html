@@ -1,8 +1,8 @@
-<div class="alert {% if cov.complete %}alert-success{% else %}alert-warning{% endif %} flex-col items-start gap-1" role="status">
-  <p><span class="badge badge-outline">{% if cov.complete %}Complete (validated){% else %}Warning: incomplete{% endif %}</span> <strong>{{ cov.label }}</strong></p>
-  <p>{{ cov.entries_known }} entr{{ cov.entries_known|pluralize:"y,ies" }} in the catalog:
-    {{ cov.entries_validated }} validated, {{ cov.entries_unvalidated }} not validated.
+<details class="text-sm my-2">
+  <summary class="cursor-pointer"><span class="badge badge-ghost badge-sm">{% if cov.complete %}Complete (validated){% else %}Coverage incomplete{% endif %}</span>
+    {{ cov.entries_known }} entr{{ cov.entries_known|pluralize:"y,ies" }}, {{ cov.entries_validated }} validated</summary>
+  <p class="mt-1"><strong>{{ cov.label }}</strong>. {{ cov.entries_known }} entr{{ cov.entries_known|pluralize:"y,ies" }} in the catalog: {{ cov.entries_validated }} validated, {{ cov.entries_unvalidated }} not validated.
     Expected total: {% if cov.expected_total is None %}unknown{% else %}{{ cov.expected_total }}{% endif %}.
     {% if cov.entries_unknown is not None %}Entries missing: {{ cov.entries_unknown }}.{% endif %}</p>
   {% if cov.reasons %}<ul class="list-disc ml-5">{% for r in cov.reasons %}<li>{{ r }}</li>{% endfor %}</ul>{% endif %}
-</div>
+</details>

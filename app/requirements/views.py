@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.db.models import ProtectedError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -180,6 +181,33 @@ def node_move(request, pk):
         except ImmutableVersionError as exc:
             messages.error(request, str(exc))
     return redirect("version_edit", pk=node.award_version_id)
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def version_delete(request, pk):
+    """Delete a draft or review version. Published and archived versions stay."""
+    version = _version(pk)
+    award = version.award
+    if version.status in AwardVersion.LOCKED_STATUSES:
+        messages.error(
+            request,
+            "Published and archived versions cannot be deleted. Plans and records may depend on them.",
+        )
+        return redirect("version_edit", pk=version.pk)
+    if request.method == "POST":
+        try:
+            version.delete()
+        except (ImmutableVersionError, ProtectedError) as exc:
+            messages.error(request, f"This version cannot be deleted: {exc}")
+            return redirect("version_edit", pk=version.pk)
+        messages.success(request, f"Version {version.version_label} deleted.")
+        return redirect("award_detail", pk=award.pk)
+    return render(
+        request,
+        "requirements/version_delete.html",
+        {"version": version, "award": award, "node_count": version.nodes.count()},
+    )
 
 
 WORKFLOW = {

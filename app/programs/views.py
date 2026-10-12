@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .forms import AwardForm, ProgramForm, VersionForm, unique_slug
+from requirements import services
 from requirements.models import RequirementNode
 
 from .coverage import coverage_for_programs, program_coverage
@@ -102,7 +103,13 @@ def award_detail(request, pk):
                 .values_list("source__url", flat=True)
             )
         )
-    return render(request, "catalog/award_detail.html", {"award": award, "versions": versions})
+    current = next((v for v in versions if v.status == "published"), versions[0] if versions else None)
+    tree = services.get_tree(current) if current else []
+    return render(
+        request,
+        "catalog/award_detail.html",
+        {"award": award, "versions": versions, "current": current, "tree": tree},
+    )
 
 
 @login_required

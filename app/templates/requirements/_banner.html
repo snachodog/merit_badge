@@ -11,10 +11,7 @@
       {% if version.change_summary %}<tr><th scope="row">Change summary</th><td>{{ version.change_summary }}</td></tr>{% endif %}
     </tbody>
   </table></div>
-  {% if version.source_status == 'user_authored' %}
-  <p class="note note-info">This content was written by you. It is not an official requirement.</p>
-  {% elif version.source_status != 'verified' %}
+  {% if version.source_status != 'verified' and version.source_status != 'user_authored' %}
   <p class="note note-warning">This content is <strong>{{ version.get_source_status_display|lower }}</strong>. Check the wording against its source before relying on it.</p>
   {% endif %}
-  <p>This app records personal learning. It does not confer official awards. Only text labeled "Official text" claims to come from an official source.</p>
 </section>

@@ -55,3 +55,33 @@ def test_award_detail_shows_source_url(client, program):
     html = page(client, f"/awards/{a.pk}/")
     assert "https://example.org/src" in html
     assert "Unverified" in html and "Unknown" in html
+
+
+def test_award_detail_lists_requirements_without_personal_learning_callouts(client, program):
+    from django.urls import reverse
+
+    award = Award.objects.get(slug="a0")
+    html = page(client, reverse("award_detail", args=[award.pk]))
+    assert "<h2>Requirements" in html and 'class="text">x</span>' in html
+    assert "This app records personal learning" not in html
+    assert "written by you" not in html
+
+
+def test_draft_version_can_be_deleted_and_published_cannot(client, program):
+    from django.urls import reverse
+
+    draft = AwardVersion.objects.get(award__slug="a0")
+    r = client.post(reverse("version_delete", args=[draft.pk]))
+    assert r.status_code == 302
+    assert not AwardVersion.objects.filter(pk=draft.pk).exists()
+    assert Award.objects.filter(slug="a0").exists()
+
+    locked = AwardVersion.objects.get(award__slug="a1")
+    AwardVersion.objects.filter(pk=locked.pk)  # status change bypasses guards only for drafts
+    AwardVersion.objects.get(pk=locked.pk)
+    from django.db import connection
+
+    with connection.cursor() as cur:
+        cur.execute("UPDATE programs_awardversion SET status='published' WHERE id=%s", [locked.pk])
+    client.post(reverse("version_delete", args=[locked.pk]))
+    assert AwardVersion.objects.filter(pk=locked.pk).exists()

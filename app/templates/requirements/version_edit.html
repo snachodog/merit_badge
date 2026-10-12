@@ -28,6 +28,9 @@
       {% else %}
         <p>Archived versions cannot be changed.</p>
       {% endif %}
+      {% if version.status == 'draft' or version.status == 'review' %}
+        <a class="btn btn-outline btn-error" href="{% url 'version_delete' version.pk %}">Delete version</a>
+      {% endif %}
     </div>
   </section>
   <section aria-labelledby="req-h">

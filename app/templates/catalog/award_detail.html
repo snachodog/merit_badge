@@ -5,6 +5,12 @@
 <h1>{{ award.name }} <span class="badge badge-outline">{{ award.get_award_type_display }}</span></h1>
 {% if award.description %}<p>{{ award.description|linebreaksbr }}</p>{% endif %}
 {% if award.eligibility_notes %}<p><strong>Eligibility notes:</strong> {{ award.eligibility_notes }}</p>{% endif %}
+{% if current %}
+<h2>Requirements <span class="text-base font-normal">(version {{ current.version_label }}, {{ current.get_status_display|lower }})</span></h2>
+{% if current.source_status != 'verified' and current.source_status != 'user_authored' %}<p class="note note-warning">This content is <strong>{{ current.get_source_status_display|lower }}</strong>. Check the wording against its source before relying on it.</p>{% endif %}
+{% if tree %}<ol class="req-tree">{% for item in tree %}{% include "requirements/_node.html" with item=item %}{% endfor %}</ol>
+{% else %}<p>This version has no requirements yet.</p>{% endif %}
+{% endif %}
 <h2>Versions</h2>
 <div class="overflow-x-auto bg-base-100 rounded-box border border-base-300"><table>
   <thead><tr><th scope="col">Version</th><th scope="col">Status</th><th scope="col">Source</th><th scope="col">Rights</th><th scope="col">Source URLs</th><th scope="col">Actions</th></tr></thead>
@@ -16,7 +22,7 @@
       <td>{{ v.get_source_status_display }}</td>
       <td>{{ v.get_rights_status_display }}</td>
       <td>{% for u in v.source_urls %}<a href="{{ u }}" rel="noopener noreferrer">{{ u }}</a>{% if not forloop.last %}<br>{% endif %}{% empty %}None cited{% endfor %}</td>
-      <td><a href="{% url 'version_edit' v.pk %}">{% if v.status == 'draft' %}Edit{% else %}Manage{% endif %}</a></td>
+      <td><a href="{% url 'version_edit' v.pk %}">{% if v.status == 'draft' %}Edit{% else %}Manage{% endif %}</a>{% if v.status == 'draft' or v.status == 'review' %} · <a href="{% url 'version_delete' v.pk %}">Delete</a>{% endif %}</td>
     </tr>
   {% empty %}<tr><td colspan="6">No versions yet.</td></tr>{% endfor %}
   </tbody>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Delete version{% endblock %}
+{% block content %}
+<div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
+  <h1>Delete {{ award.name }}, version {{ version.version_label }}?</h1>
+  <p>This deletes the {{ version.get_status_display|lower }} version and its {{ node_count }} requirement{{ node_count|pluralize }}. You cannot undo it.</p>
+  <form method="post">{% csrf_token %}<button class="btn btn-error" type="submit">Delete version</button> <a class="btn btn-ghost" href="{% url 'version_edit' version.pk %}">Cancel</a></form>
+</div>
+{% endblock %}
