@@ -63,6 +63,19 @@ class Program(TimestampedModel):
     visibility = models.CharField(
         max_length=20, choices=Visibility.choices, default=Visibility.PRIVATE
     )
+    # Catalog coverage (PLAN.md section 16, phase 3). Defaults claim nothing.
+    catalog_source_url = models.URLField(
+        blank=True, help_text="Where the owner publishes the list of entries."
+    )
+    catalog_expected_count = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="How many entries the program has, if you know. Empty means unknown.",
+    )
+    catalog_validated_complete = models.BooleanField(
+        default=False,
+        help_text="Tick only after you checked every entry against its source.",
+    )
 
     class Meta:
         ordering = ["name"]

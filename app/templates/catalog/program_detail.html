@@ -2,10 +2,12 @@
 {% block title %}{{ program.name }}{% endblock %}
 {% block content %}
 <p><a href="{% url 'catalog' %}">Catalog</a></p>
-<h1>{{ program.name }} {% if program.is_custom %}<span class="badge">Custom</span>{% endif %}</h1>
+<h1>{{ program.name }} {% if program.is_custom %}<span class="badge badge-outline">Custom</span>{% endif %}</h1>
 <p>Owner: {{ program.owner.name }}. Status: {{ program.get_status_display }}.</p>
 {% if program.description %}<p>{{ program.description|linebreaksbr }}</p>{% endif %}
+{% with cov=coverage %}{% include "catalog/_coverage.html" %}{% endwith %}
+{% if program.catalog_source_url %}<p>Catalog source: <a href="{{ program.catalog_source_url }}" rel="noopener noreferrer">{{ program.catalog_source_url }}</a></p>{% endif %}
 <h2>Awards</h2>
 <ul>{% for award in awards %}<li><a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a> ({{ award.versions.all|length }} version{{ award.versions.all|length|pluralize }})</li>{% empty %}<li>No awards yet.</li>{% endfor %}</ul>
-<p><a class="button" href="{% url 'award_create' program.pk %}">Add an award</a></p>
+<p><a class="btn btn-primary" href="{% url 'award_create' program.pk %}">Add an award</a></p>
 {% endblock %}

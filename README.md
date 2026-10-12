@@ -209,6 +209,19 @@ volumes:
 
 Back up both volumes (`pgdata` and `media`). See `docs/operations.md`.
 
+## Interface and CSS build
+
+The interface uses Tailwind CSS 4 and DaisyUI 5. The Docker build creates the stylesheet
+in a `css` stage with the Tailwind standalone CLI. The runtime image has no Node.js and
+the pages load no files from outside servers.
+
+- Source: `app/frontend/app.css`. Output: `app/static/css/app.css` (gitignored, not committed).
+- The image build needs network access to GitHub to fetch the pinned CLI and DaisyUI plugin.
+- The test image skips the CSS build. Tests do not need it.
+- To build by hand for a local run, download the CLI and `daisyui.js` (versions in the `Dockerfile`),
+  put `daisyui.js` in `app/frontend/`, then run
+  `tailwindcss --input app/frontend/app.css --output app/static/css/app.css`.
+
 ## Start, stop, recreate
 
 ```sh
@@ -274,6 +287,26 @@ After login, use the top navigation.
   On the draft's edit page you can add top-level or child requirements, edit, move up or down,
   and delete. Submit the draft for review, then publish. Publishing lists every problem found.
   A published version cannot be edited. Use "Create a draft revision" to correct it.
+
+## Scouting catalog structure
+
+Run this once to create the structure for Cub Scouts and Scouts BSA:
+
+```sh
+docker compose exec web python manage.py seed_scouting_catalog
+```
+
+The command is safe to run again. It creates Scouting America as a named source, two draft
+programs, and nothing else. It adds no requirement text and no awards. The app is unofficial
+and has no recognition from Scouting America.
+
+- Merit badges, ranks and adventures use the generic award types and requirement logic.
+  Completion uses the same engine as every other program.
+- Add entries with the JSON import. Each entry needs a source, a version label and a rights
+  status. Entries stay unreviewed until you review them.
+- Coverage is in `programs.coverage`. A catalog counts as complete only if you set
+  `catalog_validated_complete` on the program, set the expected entry count, and every entry is
+  published and reviewed. Otherwise the app must say "Incomplete catalog coverage".
 
 ## Import from JSON
 

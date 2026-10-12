@@ -6,6 +6,9 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .forms import AwardForm, ProgramForm, VersionForm, unique_slug
+from requirements.models import RequirementNode
+
+from .coverage import coverage_for_programs, program_coverage
 from .models import Award, AwardVersion, Program, ProgramOwner
 from .search import MAX_QUERY, search_awards
 
@@ -32,7 +35,10 @@ def catalog(request):
             ]
     empty_programs = []
     if not q:
-        empty_programs = Program.objects.exclude(pk__in=[p.pk for p in programs])
+        empty_programs = list(Program.objects.exclude(pk__in=[p.pk for p in programs]))
+    cov = {c.program_id: c for c in coverage_for_programs(list(programs) + empty_programs)}
+    for p in list(programs) + empty_programs:
+        p.coverage = cov[p.pk]
     return render(
         request,
         "catalog/catalog.html",
@@ -45,7 +51,7 @@ def catalog(request):
 def program_detail(request, pk):
     program = get_object_or_404(Program.objects.select_related("owner"), pk=pk)
     awards = program.awards.prefetch_related("versions")
-    return render(request, "catalog/program_detail.html", {"program": program, "awards": awards})
+    return render(request, "catalog/program_detail.html", {"program": program, "awards": awards, "coverage": program_coverage(program)})
 
 
 @login_required
@@ -87,7 +93,16 @@ def award_create(request, pk):
 @login_required
 def award_detail(request, pk):
     award = get_object_or_404(Award.objects.select_related("program"), pk=pk)
-    return render(request, "catalog/award_detail.html", {"award": award, "versions": award.versions.all()})
+    versions = list(award.versions.all())
+    for v in versions:
+        v.source_urls = sorted(
+            set(
+                RequirementNode.objects.filter(award_version=v, source__isnull=False)
+                .exclude(source__url="")
+                .values_list("source__url", flat=True)
+            )
+        )
+    return render(request, "catalog/award_detail.html", {"award": award, "versions": versions})
 
 
 @login_required

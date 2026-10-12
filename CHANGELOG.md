@@ -4,6 +4,14 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+### Changed
+- New interface built with Tailwind CSS 4 and DaisyUI 5 (light and dark themes, collapsing navbar). CSS is built in a Docker `css` stage with the Tailwind standalone CLI. No CDN, no Node.js at runtime. See `docs/decisions/0004-daisyui-tailwind.md`.
+
+### Added
+- Catalog list and program pages show coverage: validated and unvalidated counts, unknown totals and reasons. Award pages show source URLs. Nothing is called complete unless validated.
+- `seed_scouting_catalog` command: Scouting America as a named source, plus draft Cub Scouts and Scouts BSA programs. No requirement text.
+- Program fields for catalog source URL, expected entry count and a validated-complete flag (migration `0003`).
+- `programs.coverage`: per-program counts of validated and unvalidated entries. A catalog is never called complete unless you validate it.
 
 ## [0.3.2] - 2026-10-11
 ### Changed
