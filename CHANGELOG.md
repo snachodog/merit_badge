@@ -5,6 +5,18 @@ All notable changes to this project are documented here. Format based on
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-12
+### Fixed
+- Page sections no longer overlap. The `stack` helper class clashed with the DaisyUI `stack` component, so requirements were hidden behind the status card on version, plan, settings and import pages. It is now `vstack`.
+
+### Added
+- The award page lists the requirements of its current version.
+- You can delete a draft or review version. Published and archived versions cannot be deleted.
+
+### Changed
+- Removed the "written by you", "records personal learning" and "content is unverified" callouts. The unverified note may return in another form.
+- The coverage alert is now a small "Coverage incomplete" badge that expands for details.
+
 ## [0.5.0] - 2026-10-11
 ### Added
 - `import_handbook_1911` command and `scripts/convert_1911_handbook.py`: all 56 merit badges with requirements in the 1911 Boy Scouts Handbook (Scholarship has none) as draft versions (public domain in the US; historical text, not official). Never published by the command. Not counted in Scouting catalog coverage. See `docs/decisions/0005-1911-handbook-source.md`.
