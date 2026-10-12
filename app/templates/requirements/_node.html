@@ -7,22 +7,22 @@
   </div>
   {% if node.completion_logic != 'single' %}<p class="logic">{{ node|logic_label }}</p>{% endif %}
   <div class="meta">
-    {% if node.text_origin == 'official_source' %}<span class="badge official">Official text</span>
-    {% else %}<span class="badge">Not official text: {{ node.get_text_origin_display|lower }}</span>{% endif %}
-    {% if node.node_type != 'atomic' %}<span class="badge">{{ node.get_node_type_display }}</span>{% endif %}
-    {% for tag in node.action_tags.all %}<span class="badge" >{{ tag.get_tag_display }}{% if not tag.reviewed %} (unreviewed tag){% endif %}</span>{% endfor %}
+    {% if node.text_origin == 'official_source' %}<span class="badge badge-outline badge-success">Official text</span>
+    {% else %}<span class="badge badge-outline">Not official text: {{ node.get_text_origin_display|lower }}</span>{% endif %}
+    {% if node.node_type != 'atomic' %}<span class="badge badge-outline">{{ node.get_node_type_display }}</span>{% endif %}
+    {% for tag in node.action_tags.all %}<span class="badge badge-outline" >{{ tag.get_tag_display }}{% if not tag.reviewed %} (unreviewed tag){% endif %}</span>{% endfor %}
     {% if node.source %}<span>Source: {% if node.source.url %}<a href="{{ node.source.url }}" rel="noopener noreferrer">{{ node.source.title }}</a>{% else %}{{ node.source.title }}{% endif %} ({{ node.source.get_review_status_display|lower }})</span>
-    {% elif node.text_origin == 'official_source' %}<span class="badge warn">No source recorded</span>{% endif %}
+    {% elif node.text_origin == 'official_source' %}<span class="badge badge-outline badge-warning">No source recorded</span>{% endif %}
     {% if node.estimated_effort %}<span>Estimate: {{ node.estimated_effort }}</span>{% endif %}
   </div>
   {% if node.safety_notes %}<p><strong>Safety:</strong> {{ node.safety_notes }}</p>{% endif %}
   {% if editing %}
   <div class="controls">
-    <a class="button secondary" href="{% url 'node_edit' node.pk %}">Edit</a>
-    <a class="button secondary" href="{% url 'node_add' version.pk %}?parent={{ node.pk }}">Add child</a>
-    <form method="post" action="{% url 'node_move' node.pk %}">{% csrf_token %}<input type="hidden" name="direction" value="up"><button class="secondary" type="submit" aria-label="Move {{ node.display_number|default:'requirement' }} up">Move up</button></form>
-    <form method="post" action="{% url 'node_move' node.pk %}">{% csrf_token %}<input type="hidden" name="direction" value="down"><button class="secondary" type="submit" aria-label="Move {{ node.display_number|default:'requirement' }} down">Move down</button></form>
-    <a class="button secondary" href="{% url 'node_delete' node.pk %}">Delete</a>
+    <a class="btn btn-outline btn-primary" href="{% url 'node_edit' node.pk %}">Edit</a>
+    <a class="btn btn-outline btn-primary" href="{% url 'node_add' version.pk %}?parent={{ node.pk }}">Add child</a>
+    <form method="post" action="{% url 'node_move' node.pk %}">{% csrf_token %}<input type="hidden" name="direction" value="up"><button class="btn btn-outline btn-primary" type="submit" aria-label="Move {{ node.display_number|default:'requirement' }} up">Move up</button></form>
+    <form method="post" action="{% url 'node_move' node.pk %}">{% csrf_token %}<input type="hidden" name="direction" value="down"><button class="btn btn-outline btn-primary" type="submit" aria-label="Move {{ node.display_number|default:'requirement' }} down">Move down</button></form>
+    <a class="btn btn-outline btn-primary" href="{% url 'node_delete' node.pk %}">Delete</a>
   </div>
   {% endif %}
   {% if item.children %}

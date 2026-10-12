@@ -4,11 +4,11 @@
 <h1>Achievements</h1>
 <p>These are personal, unofficial learning records. They do not confer official awards.</p>
 {% for r in records %}
-<article class="card stack" aria-labelledby="a{{ r.pk }}">
+<article class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="a{{ r.pk }}">
   <h2 id="a{{ r.pk }}">{{ r.display_title }}</h2>
   <p>{{ r.get_achievement_type_display }}. Version {{ r.requirement_version_label }}. Personally completed {{ r.completed_at|date:"Y-m-d" }}.</p>
   <p>Basis: {{ r.get_completion_basis_display }}.</p>
-  <p class="actions"><a class="button" href="{% url 'certificate' r.pk %}">Open certificate</a>
+  <p class="actions"><a class="btn btn-primary" href="{% url 'certificate' r.pk %}">Open certificate</a>
   <a href="{% url 'plan_detail' r.learning_plan_id %}">View the plan</a></p>
 </article>
 {% empty %}

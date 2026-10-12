@@ -1,86 +1,59 @@
-<!doctype html>
+{% load static %}<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>{% block title %}Merit Badge{% endblock %}</title>
-  <style>
-    :root { color-scheme: light dark; --fg:#1b1b1b; --bg:#fafafa; --accent:#1f5f3f; --card:#fff; --line:#d0d0d0; }
-    @media (prefers-color-scheme: dark) { :root { --fg:#eee; --bg:#161616; --accent:#6fcf97; --card:#222; --line:#444; } }
-    * { box-sizing: border-box; }
-    body { margin:0; font:1rem/1.5 system-ui,sans-serif; color:var(--fg); background:var(--bg); }
-    header { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:space-between; align-items:center; padding:.75rem 1rem; border-bottom:1px solid var(--line); }
-    main { max-width:60rem; margin:0 auto; padding:1rem; }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:.5rem; padding:1rem; }
-    label { display:block; margin-top:.75rem; }
-    input { width:100%; padding:.6rem; font:inherit; }
-    button { margin-top:1rem; padding:.6rem 1rem; font:inherit; background:var(--accent); color:var(--bg); border:0; border-radius:.3rem; cursor:pointer; }
-    header button { margin:0; background:none; color:var(--accent); border:1px solid var(--accent); }
-    .errorlist { color:#b00020; padding-left:1.2rem; }
-    a { color:var(--accent); }
-    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline:3px solid #0b57d0; outline-offset:2px; }
-    .skip { position:absolute; left:-999px; top:0; background:var(--card); padding:.5rem; z-index:10; }
-    .skip:focus { left:0; }
-    nav ul { display:flex; flex-wrap:wrap; gap:.25rem 1rem; list-style:none; margin:0; padding:0; }
-    select, textarea { width:100%; padding:.5rem; font:inherit; }
-    input[type=checkbox], input[type=radio] { width:auto; }
-    .helptext { display:block; font-size:.9rem; opacity:.8; }
-    .stack > * + * { margin-top:1rem; }
-    .badge { display:inline-block; padding:.05rem .5rem; border:1px solid var(--line); border-radius:1rem; font-size:.85rem; white-space:nowrap; }
-    .badge.official { border-color:var(--accent); font-weight:600; }
-    .badge.warn { border-color:#b26a00; }
-    .msg { padding:.6rem .8rem; border-left:4px solid var(--accent); background:var(--card); margin:.5rem 0; }
-    .msg.error { border-color:#b00020; } .msg.warning { border-color:#b26a00; }
-    .req-tree, .req-tree ol { list-style:none; margin:0; padding:0; }
-    .req-tree ol { margin-left:1rem; padding-left:.75rem; border-left:2px solid var(--line); }
-    .req { margin:.6rem 0; }
-    .req .num { font-weight:700; margin-right:.4rem; }
-    .req .meta { font-size:.9rem; display:flex; flex-wrap:wrap; gap:.25rem .6rem; margin-top:.25rem; }
-    .req .logic { font-style:italic; margin:.25rem 0 0; }
-    .controls { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.3rem; }
-    .controls form { display:inline; }
-    .controls button, .button { margin:0; padding:.25rem .6rem; font-size:.9rem; display:inline-block; text-decoration:none; }
-    a.button { background:var(--accent); color:var(--bg); border-radius:.3rem; }
-    button.secondary { background:none; color:var(--accent); border:1px solid var(--accent); }
-    button.danger { background:#b00020; color:#fff; }
-    table { border-collapse:collapse; width:100%; } th, td { text-align:left; padding:.3rem .5rem; border-bottom:1px solid var(--line); vertical-align:top; }
-    .searchbar { display:flex; gap:.5rem; flex-wrap:wrap; } .searchbar input { flex:1 1 14rem; } .searchbar button { margin:0; }
-    .counts { display:flex; flex-wrap:wrap; gap:.5rem; list-style:none; padding:0; margin:.5rem 0; }
-    .counts li { border:1px solid var(--line); border-radius:.4rem; padding:.3rem .7rem; background:var(--card); }
-    .counts strong { font-size:1.2rem; margin-right:.3rem; }
-    .actions { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
-    .actions form { display:inline; } .actions button { margin:0; }
-    blockquote.req-text { margin:.5rem 0; padding:.5rem .8rem; border-left:4px solid var(--accent); background:var(--card); }
-    .certificate { border:3px double var(--fg); padding:2rem 1.5rem; text-align:center; background:#fff; color:#111; max-width:44rem; margin:1rem auto; }
-    .certificate h1 { font-size:1.8rem; margin:.5rem 0; } .certificate .name { font-size:1.6rem; font-weight:700; margin:.5rem 0; }
-    .certificate dl { text-align:left; display:grid; grid-template-columns:max-content 1fr; gap:.3rem 1rem; margin:1.5rem 0; }
-    .certificate dt { font-weight:700; } .certificate dd { margin:0; }
-    .certificate .disclaimer { border-top:1px solid #777; padding-top:1rem; font-size:.95rem; text-align:left; }
-    @media (max-width:30rem) { .certificate dl { grid-template-columns:1fr; } .certificate dd { margin-bottom:.5rem; } }
-    @media print { header, .skip, .no-print, .msg { display:none !important; } body { background:#fff; color:#000; } main { max-width:none; padding:0; } .certificate { border-color:#000; margin:0 auto; } a { color:inherit; } }
-    fieldset { border:1px solid var(--line); } .checks ul { list-style:none; padding:0; columns:2 10rem; } .checks label { display:inline; margin:0; }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
   {% block head %}{% endblock %}
 </head>
-<body>
-  <a class="skip" href="#main">Skip to content</a>
-  <header>
-    <strong>Merit Badge</strong>
+<body class="min-h-screen bg-base-200 text-base-content">
+  <a class="skip-link sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 btn btn-primary" href="#main">Skip to content</a>
+  <header class="navbar bg-base-100 border-b border-base-300 gap-2">
+    <div class="navbar-start w-auto lg:w-1/4">
+      {% if user.is_authenticated %}
+      <details class="dropdown lg:hidden">
+        <summary class="btn btn-ghost btn-square" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </summary>
+        <nav aria-label="Main (mobile)">
+          <ul class="menu dropdown-content bg-base-100 rounded-box z-10 mt-3 w-60 p-2 shadow border border-base-300">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'my_learning' %}">My Learning</a></li>
+        <li><a href="{% url 'catalog' %}">Catalog</a></li>
+        <li><a href="{% url 'achievement_list' %}">Achievements</a></li>
+        <li><a href="{% url 'program_create' %}">New custom program</a></li>
+        <li><a href="{% url 'import_program' %}">Import JSON</a></li>
+        <li><a href="{% url 'settings' %}">Settings</a></li>
+          </ul>
+        </nav>
+      </details>
+      {% endif %}
+      <strong class="text-lg px-2">Merit Badge</strong>
+    </div>
     {% if user.is_authenticated %}
-    <nav aria-label="Main"><ul>
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'my_learning' %}">My Learning</a></li>
-      <li><a href="{% url 'catalog' %}">Catalog</a></li>
-      <li><a href="{% url 'achievement_list' %}">Achievements</a></li>
-      <li><a href="{% url 'program_create' %}">New custom program</a></li>
-      <li><a href="{% url 'import_program' %}">Import JSON</a></li>
-      <li><a href="{% url 'settings' %}">Settings</a></li>
-    </ul></nav>
-    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<span>{{ user.get_username }}</span> <button type="submit">Log out</button></form>
+    <nav class="navbar-center hidden lg:flex" aria-label="Main">
+      <ul class="menu menu-horizontal menu-sm px-1">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'my_learning' %}">My Learning</a></li>
+        <li><a href="{% url 'catalog' %}">Catalog</a></li>
+        <li><a href="{% url 'achievement_list' %}">Achievements</a></li>
+        <li><a href="{% url 'program_create' %}">New custom program</a></li>
+        <li><a href="{% url 'import_program' %}">Import JSON</a></li>
+        <li><a href="{% url 'settings' %}">Settings</a></li>
+      </ul>
+    </nav>
+    <div class="navbar-end flex-1 lg:w-1/4">
+      <form method="post" action="{% url 'logout' %}" class="flex items-center gap-2">{% csrf_token %}
+        <span class="text-sm">{{ user.get_username }}</span>
+        <button type="submit" class="btn btn-outline btn-primary btn-sm">Log out</button>
+      </form>
+    </div>
     {% endif %}
   </header>
-  <main id="main">
-    {% if messages %}<div role="status">{% for m in messages %}<p class="msg {{ m.level_tag }}"{% if m.level_tag == 'error' %} role="alert"{% endif %}>{{ m }}</p>{% endfor %}</div>{% endif %}
+  <main id="main" class="max-w-4xl mx-auto p-4 space-y-4">
+    {% if messages %}<div role="status" class="space-y-2">{% for m in messages %}<p class="alert {% if m.level_tag == 'error' %}alert-error{% elif m.level_tag == 'warning' %}alert-warning{% elif m.level_tag == 'success' %}alert-success{% else %}alert-info{% endif %}"{% if m.level_tag == 'error' %} role="alert"{% endif %}>{{ m }}</p>{% endfor %}</div>{% endif %}
     {% block content %}{% endblock %}
   </main>
 </body>

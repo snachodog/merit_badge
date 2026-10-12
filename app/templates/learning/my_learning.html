@@ -3,7 +3,7 @@
 {% block content %}
 <h1>My Learning</h1>
 {% if not has_plans %}
-<div class="card stack">
+<div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
   <p>You have no learning plans yet.</p>
   <p>Open a published version in the <a href="{% url 'catalog' %}">catalog</a> and choose "Start plan".
   To write your own achievement, use <a href="{% url 'program_create' %}">New custom program</a>.</p>
@@ -16,7 +16,7 @@
     {% for plan in plans %}
     <li>
       <a href="{% url 'plan_detail' plan.pk %}">{{ plan.title }}</a>
-      <span class="badge">{{ plan.get_status_display }}</span>
+      <span class="badge badge-outline">{{ plan.get_status_display }}</span>
       <span>Version {{ plan.award_version.version_label }}</span>
       {% if plan.target_date %}<span>Target: {{ plan.target_date|date:"Y-m-d" }}</span>{% endif %}
     </li>

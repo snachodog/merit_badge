@@ -125,6 +125,8 @@ USE_TZ = True
 
 # Static files: collected and served by WhiteNoise. Public by design.
 STATIC_URL = "static/"
+# app/static holds css/app.css, built by the Docker css stage (not committed).
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = Path(os.environ.get("DJANGO_STATIC_ROOT", BASE_DIR.parent / "staticfiles"))
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},

@@ -1,0 +1,87 @@
+/* Source for app/static/css/app.css. Built by the Docker "css" stage.
+   daisyui.js is fetched at build time (see Dockerfile). */
+@import "tailwindcss";
+@source "../templates";
+@plugin "./daisyui.js" {
+  themes: light --default, dark --prefersdark;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-info);
+    outline-offset: 2px;
+  }
+  main h1 { @apply text-3xl font-bold mb-4; }
+  main h2 { @apply text-xl font-semibold; }
+  main h3 { @apply text-lg font-semibold mt-2; }
+  main a:not(.btn) { @apply link link-primary; }
+  main ul:not(.menu):not(.req-tree):not(.counts):not(.errorlist):not(.list) { @apply list-disc pl-6; }
+  main ol:not(.req-tree) { @apply list-decimal pl-6; }
+  main code { @apply font-mono text-sm bg-base-200 px-1 rounded; }
+  main table { @apply table; }
+  main blockquote { @apply border-l-4 border-primary bg-base-200 px-4 py-2 my-2; }
+  main label { @apply block mt-3 mb-1 font-medium; }
+  main fieldset { @apply border border-base-300 rounded-box p-3; }
+  main legend { @apply px-1 font-medium; }
+}
+
+@layer components {
+  /* Form fields rendered by Django widgets in catalog/_form_fields.html */
+  .field input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]) { @apply input w-full; }
+  .field input[type="file"] { @apply file-input w-full; }
+  .field input[type="checkbox"] { @apply checkbox checkbox-sm align-middle; }
+  .field input[type="radio"] { @apply radio radio-sm align-middle; }
+  .field select { @apply select w-full; }
+  .field textarea { @apply textarea w-full; }
+  .field label { @apply mb-1; }
+  .field .checks label { @apply inline ml-1 mt-0; }
+  .field .checks ul { @apply list-none p-0 columns-2xs; }
+  .helptext { @apply block text-sm opacity-80 mt-1; }
+  .errorlist { @apply list-none pl-0 text-error text-sm; }
+  .login-form input { @apply input w-full; }
+
+  /* Requirement tree */
+  .req-tree, .req-tree ol { @apply list-none m-0 p-0; }
+  .req-tree ol { @apply ml-4 pl-3 border-l-2 border-base-300; }
+  .req { @apply my-3; }
+  .req .num { @apply font-bold mr-1; }
+  .req .meta { @apply flex flex-wrap gap-x-3 gap-y-1 text-sm mt-1; }
+  .req .logic { @apply italic mt-1; }
+  .controls { @apply flex flex-wrap gap-2 mt-2; }
+  .controls form { @apply inline; }
+  .actions { @apply flex flex-wrap gap-2 items-center; }
+  .actions form { @apply inline; }
+  .counts { @apply flex flex-wrap gap-2 list-none p-0 my-2; }
+  .counts li { @apply border border-base-300 rounded-field bg-base-200 px-3 py-1; }
+  .counts strong { @apply text-xl mr-1; }
+  .searchbar { @apply flex flex-wrap gap-2; }
+  .searchbar input { @apply flex-1 basis-56; }
+
+  /* Certificate: always paper-like, also in dark mode */
+  .certificate { @apply border-4 border-double border-neutral text-center bg-white text-black px-6 py-8 max-w-2xl mx-auto my-4; }
+  .certificate h1 { @apply text-3xl my-2; }
+  .certificate .name { @apply text-3xl font-bold my-2; }
+  .certificate dl { @apply grid grid-cols-1 sm:grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-left my-6; }
+  .certificate dt { @apply font-bold; }
+  .certificate dd { @apply m-0 mb-2 sm:mb-0; }
+  .certificate .disclaimer { @apply border-t border-gray-500 pt-4 text-left; }
+}
+
+@media print {
+  .no-print, header, .skip-link, .alert { display: none !important; }
+  body { background: #fff; color: #000; }
+  main { max-width: none; padding: 0; }
+  .certificate { border-color: #000; margin: 0 auto; }
+}
+
+@layer components {
+  .stack > * + * { @apply mt-4; }
+  .badge { @apply h-auto min-h-6 py-0.5 whitespace-normal text-left; }
+  .controls .btn, .actions .btn { @apply btn-sm; }
+  .searchbar input { @apply input; }
+  .note { @apply border-l-4 border-primary bg-base-200 rounded-field px-3 py-2 my-2; }
+  .note-info { @apply border-info; }
+  .note-warning { @apply border-warning; }
+  .note-error { @apply border-error; }
+  .radio-row label { @apply flex items-center gap-2 mt-1 font-normal; }
+}

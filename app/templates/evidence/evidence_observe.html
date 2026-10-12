@@ -3,13 +3,13 @@
 {% block content %}
 <p><a href="{% url 'progress_detail' progress.pk %}">Back to requirement {{ progress.requirement_node.display_number }}</a></p>
 <h1>Record that a person observed this</h1>
-<div class="card stack">
+<div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
   <p>Evidence: <strong>{{ record }}</strong>.</p>
   <p>Use this only when a real person watched you do it or checked the work. Say who. An AI cannot be the observer.
   This note records what that person told you. It is not an official approval.</p>
   <form method="post">{% csrf_token %}
     {% include "catalog/_form_fields.html" %}
-    <button type="submit">Save</button> <a href="{% url 'progress_detail' progress.pk %}">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save</button> <a class="btn btn-ghost" href="{% url 'progress_detail' progress.pk %}">Cancel</a>
   </form>
 </div>
 {% endblock %}

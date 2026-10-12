@@ -3,18 +3,18 @@
 {% block content %}
 <h1>Import a program from JSON</h1>
 <div class="stack">
-<section class="card stack">
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
   <p>The file is checked first. Nothing is saved until you confirm. Imports always create a draft version. They never change a published version.</p>
   <p>Maximum size {{ max_kib }} KiB. The format is in <code>docs/schemas/program-import.schema.json</code>.</p>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <label for="file">JSON file</label>
-    <input id="file" name="file" type="file" accept=".json,application/json" required>
-    <button type="submit">Check file (dry run)</button>
+    <div class="field"><label for="file">JSON file</label>
+    <input id="file" name="file" type="file" accept=".json,application/json" required></div>
+    <button type="submit" class="btn btn-primary mt-4">Check file (dry run)</button>
   </form>
 </section>
 {% if report %}
-<section class="card stack" aria-labelledby="rep-h">
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="rep-h">
   <h2 id="rep-h">Check result{% if filename %} for {{ filename }}{% endif %}</h2>
   <p><strong>
     {% if report.outcome == 'invalid' %}The file has errors. Nothing can be imported.
@@ -28,7 +28,7 @@
   {% if report.updates %}<h3>Will update</h3><ul>{% for c in report.updates %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
   {% if report.warnings %}<h3>Warnings</h3><ul>{% for c in report.warnings %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
   {% if report.can_commit %}
-  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="commit"><button type="submit">Import as draft</button></form>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="commit"><button type="submit" class="btn btn-primary">Import as draft</button></form>
   {% endif %}
 </section>
 {% endif %}

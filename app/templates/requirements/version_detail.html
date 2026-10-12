@@ -11,7 +11,7 @@
     {% else %}<p>This version has no requirements yet.</p>{% endif %}
   </section>
   {% if version.status == 'published' %}
-  <p class="actions"><a class="button" href="{% url 'plan_start' version.pk %}">Start plan</a>
+  <p class="actions"><a class="btn btn-primary" href="{% url 'plan_start' version.pk %}">Start plan</a>
   <span>Review the requirements first. Starting a plan pins it to this version.</span></p>
   {% endif %}
   <p><a href="{% url 'version_edit' version.pk %}">{% if version.status == 'draft' %}Edit this draft{% else %}Manage this version{% endif %}</a></p>

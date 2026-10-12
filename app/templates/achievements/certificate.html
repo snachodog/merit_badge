@@ -2,7 +2,7 @@
 {% block title %}Certificate: {{ record.display_title }}{% endblock %}
 {% block content %}
 <p class="no-print actions"><a href="{% url 'achievement_list' %}">Achievements</a>
-<button type="button" onclick="window.print()">Print this page</button></p>
+<button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Print this page</button></p>
 <article class="certificate" aria-labelledby="cert-h">
   <p>Personal learning record, unofficial</p>
   <h1 id="cert-h">{{ record.display_title }}</h1>

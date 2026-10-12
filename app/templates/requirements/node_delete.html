@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Delete requirement{% endblock %}
 {% block content %}
-<div class="card">
+<div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
   <h1>Delete requirement {{ node.display_number }}?</h1>
   <blockquote>{{ node.text|truncatechars:300 }}</blockquote>
-  {% if child_count %}<p class="msg warning">This also deletes {{ child_count }} requirement{{ child_count|pluralize }} directly below it, and everything under those.</p>{% endif %}
-  <form method="post">{% csrf_token %}<button class="danger" type="submit">Delete</button> <a href="{% url 'version_edit' version.pk %}">Cancel</a></form>
+  {% if child_count %}<p class="note note-warning">This also deletes {{ child_count }} requirement{{ child_count|pluralize }} directly below it, and everything under those.</p>{% endif %}
+  <form method="post">{% csrf_token %}<button class="btn btn-error" type="submit">Delete</button> <a class="btn btn-ghost" href="{% url 'version_edit' version.pk %}">Cancel</a></form>
 </div>
 {% endblock %}

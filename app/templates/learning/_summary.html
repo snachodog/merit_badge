@@ -1,4 +1,4 @@
-<section class="card stack" aria-labelledby="sum-h">
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="sum-h">
   <h2 id="sum-h">Where you stand</h2>
   <ul class="counts">
     {% for label, n in counts %}<li><strong>{{ n }}</strong>{{ label }}</li>{% endfor %}
@@ -6,7 +6,7 @@
   <p>{{ summary.requirements_complete }} of {{ summary.requirements_total }} single requirements that apply to you are personally completed.
   This is a count, not a percentage. It comes from the requirement rules, and you cannot edit it.
   A high count does not mean the plan is complete if a required item is still open.</p>
-  {% if summary.unresolved %}<p class="msg warning">{{ summary.unresolved }} condition{{ summary.unresolved|pluralize }} still need{{ summary.unresolved|pluralize:"s," }} your answer. Until you answer, the plan cannot be complete.</p>{% endif %}
+  {% if summary.unresolved %}<p class="note note-warning">{{ summary.unresolved }} condition{{ summary.unresolved|pluralize }} still need{{ summary.unresolved|pluralize:"s," }} your answer. Until you answer, the plan cannot be complete.</p>{% endif %}
   <h3>Still outstanding</h3>
   {% if outstanding %}
   <ul>

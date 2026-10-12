@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Log in - Merit Badge{% endblock %}
 {% block content %}
-<div class="card">
+<div class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
   <h1>Log in</h1>
-  <form method="post">{% csrf_token %}
-    {{ form.non_field_errors }}
-    <label for="{{ form.username.id_for_label }}">Username</label>{{ form.username }}
-    <label for="{{ form.password.id_for_label }}">Password</label>{{ form.password }}
+  <form method="post" class="max-w-sm">{% csrf_token %}
+    <div role="alert" class="errorlist">{{ form.non_field_errors }}</div>
+    <div class="field"><label for="{{ form.username.id_for_label }}">Username</label>{{ form.username }}</div>
+    <div class="field"><label for="{{ form.password.id_for_label }}">Password</label>{{ form.password }}</div>
     <input type="hidden" name="next" value="{{ next }}">
-    <button type="submit">Log in</button>
+    <button type="submit" class="btn btn-primary mt-4">Log in</button>
   </form>
 </div>
 {% endblock %}
