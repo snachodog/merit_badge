@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.5.0] - 2026-10-11
 ### Added
 - `import_handbook_1911` command and `scripts/convert_1911_handbook.py`: all 56 merit badges with requirements in the 1911 Boy Scouts Handbook (Scholarship has none) as draft versions (public domain in the US; historical text, not official). Never published by the command. Not counted in Scouting catalog coverage. See `docs/decisions/0005-1911-handbook-source.md`.
 - `seed_tutorial` command and the "How to use Merit Badge" tutorial plan. The container runs it at start unless `SEED_TUTORIAL=false`. The home page links to it. It is not counted in Scouting catalog coverage.
