@@ -85,3 +85,11 @@ def test_draft_version_can_be_deleted_and_published_cannot(client, program):
         cur.execute("UPDATE programs_awardversion SET status='published' WHERE id=%s", [locked.pk])
     client.post(reverse("version_delete", args=[locked.pk]))
     assert AwardVersion.objects.filter(pk=locked.pk).exists()
+
+
+def test_templates_do_not_use_the_daisyui_stack_component():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent / "app/templates"
+    bad = [str(p) for p in root.rglob("*.html") if 'class="stack"' in p.read_text() or ' stack ' in p.read_text()]
+    assert not bad, f"DaisyUI .stack overlaps children; use vstack: {bad}"

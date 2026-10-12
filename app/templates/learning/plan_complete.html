@@ -3,7 +3,7 @@
 {% block content %}
 <p><a href="{% url 'plan_detail' plan.pk %}">Back to the plan</a></p>
 <h1>Record personal completion: {{ plan.title }}</h1>
-<div class="stack">
+<div class="vstack">
   {% include "learning/_summary.html" %}
   {% if can_complete %}
   <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">

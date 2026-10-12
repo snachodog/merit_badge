@@ -3,7 +3,7 @@
 {% block content %}
 <p><a href="{% url 'catalog' %}">Catalog</a> / <a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a></p>
 <h1>{{ award.name }}, version {{ version.version_label }}</h1>
-<div class="stack">
+<div class="vstack">
   {% include "requirements/_banner.html" %}
   <section aria-labelledby="req-h">
     <h2 id="req-h">Requirements</h2>

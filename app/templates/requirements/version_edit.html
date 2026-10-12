@@ -3,7 +3,7 @@
 {% block content %}
 <p><a href="{% url 'catalog' %}">Catalog</a> / <a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a> / <a href="{% url 'version_detail' version.pk %}">Reader view</a></p>
 <h1>{{ award.name }}, version {{ version.version_label }}: {{ version.get_status_display }}</h1>
-<div class="stack">
+<div class="vstack">
   {% include "requirements/_banner.html" %}
   <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="wf-h">
     <h2 id="wf-h">Workflow</h2>

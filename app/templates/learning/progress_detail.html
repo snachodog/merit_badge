@@ -4,7 +4,7 @@
 {% block content %}
 <p><a href="{% url 'plan_detail' plan.pk %}">{{ plan.title }}</a>{% if parent_progress_id %} / <a href="{% url 'progress_detail' parent_progress_id %}">{{ node.parent.display_number|default:"parent" }}</a>{% endif %}</p>
 <h1>Requirement {{ node.display_number }}</h1>
-<div class="stack">
+<div class="vstack">
   {% if not plan_open %}<p class="note note-warning">This plan is {{ plan.get_status_display|lower }}. You can read it, but not change it.</p>{% endif %}
   {% if plan.status != 'active' and plan_open %}<p class="note note-warning">This plan is {{ plan.get_status_display|lower }}. Start or resume it to change the status.</p>{% endif %}
 

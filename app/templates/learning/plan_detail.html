@@ -3,7 +3,7 @@
 {% block content %}
 <p><a href="{% url 'my_learning' %}">My Learning</a></p>
 <h1>{{ plan.title }}</h1>
-<div class="stack">
+<div class="vstack">
   <p>
     <span class="badge badge-outline">{{ plan.get_status_display }}</span>
     Pinned to version <a href="{% url 'version_detail' version.pk %}">{{ version.version_label }}</a>

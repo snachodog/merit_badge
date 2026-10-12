@@ -75,7 +75,7 @@
 }
 
 @layer components {
-  .stack > * + * { @apply mt-4; }
+  .vstack > * + * { @apply mt-4; }
   .badge { @apply h-auto min-h-6 py-0.5 whitespace-normal text-left; }
   .controls .btn, .actions .btn { @apply btn-sm; }
   .searchbar input { @apply input; }

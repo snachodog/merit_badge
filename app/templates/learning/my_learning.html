@@ -10,7 +10,7 @@
 </div>
 {% endif %}
 {% for name, plans in groups %}
-<section class="stack" aria-labelledby="g-{{ forloop.counter }}">
+<section class="vstack" aria-labelledby="g-{{ forloop.counter }}">
   <h2 id="g-{{ forloop.counter }}">{{ name }}</h2>
   <ul>
     {% for plan in plans %}
