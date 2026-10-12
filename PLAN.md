@@ -1179,6 +1179,27 @@ Each phase should leave the application deployable. Do not implement a later pha
 - Published entries have provenance and reviewed content status.
 - The app never claims to provide a complete catalog unless that has been validated.
 
+## Phase 3a: Tutorial learning plan (release 0.5.0)
+
+Owner-requested addition. It ships before Phase 4.
+
+**Deliverables**
+
+- A template learning plan, "How to use Merit Badge", that works as the in-app tutorial and user documentation.
+- It uses the generic engine only: a published, custom (non-official) award with nested requirements, action tags, and evidence expectations.
+- Steps cover the app's own workflow: browse the catalog, start a plan, read a requirement, record notes and evidence, mark a requirement done, pause or resume, complete a plan, view the unofficial certificate, and export your data.
+- An idempotent management command seeds it (for example `seed_tutorial`). The first-run home page links to it.
+- Authored by this project in plain language (ISO 24495-1). It contains no Scouting America text.
+- Marked clearly as unofficial, with source and rights metadata like any other entry.
+
+**Exit criteria**
+
+- A new user can finish the tutorial plan using only the app.
+- Completion comes from the requirement logic, like any other plan.
+- The seed command is safe to run twice and never overwrites a learner's progress.
+- The tutorial is not counted toward Scouting catalog coverage.
+- Tests cover the seed command, the plan flow, and the coverage exclusion.
+
 ## Phase 4: AI tutoring and EDGE instruction
 
 **Deliverables**
