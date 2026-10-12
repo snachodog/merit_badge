@@ -1212,7 +1212,10 @@ Owner-requested addition. It ships before Phase 4.
 - Reproduce each requirement exactly, including old spelling and wording. Do not paraphrase.
 - Mark the entry "historical 1911 text, not a current or official Scouting America requirement". Do not use it for Scouting catalog coverage counts.
 - Many 1911 badges are obsolete or unsafe for today. Show a short note on that. The learner does not need to complete anything unsafe.
-- The owner picks which badges to include. Start with a small set. Ask before choosing.
+- Include every merit badge in the 1911 section. The owner decided this.
+- Convert the text with a script into the program import JSON, then check it against Gutenberg badge by badge. Keep the script in `scripts/`, not the converted text's source in `source_reqs/`.
+- Import with the dry-run importer first. Publish only after the owner reviews the result.
+- Test that the count of imported badges matches the count in the source, and that no text was changed.
 
 ## Phase 4: AI tutoring and EDGE instruction
 
