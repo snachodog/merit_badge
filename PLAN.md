@@ -1192,7 +1192,7 @@ Owner-requested addition. It ships before Phase 4.
 - Authored by this project in plain language (ISO 24495-1). It contains no Scouting America text.
 - Marked clearly as unofficial, with source and rights metadata like any other entry.
 - A step that explains how to share Merit Badge with a friend. Sharing means pointing a friend to the project page and the self-hosting guide (`sample.docker-compose.yaml`, README). The app adds no accounts, invites, profiles, or in-app sharing, because §0.2 forbids community features.
-- An optional second template, a historical entry based on Robert Baden-Powell's original criteria (*Scouting for Boys*, 1908). It ships only after the rights check below passes.
+- An optional second template: a historical entry built from the merit badge requirements in the *Boy Scouts Handbook*, First Edition, 1911 (Boy Scouts of America). It ships only after the rights check below passes.
 
 **Exit criteria**
 
@@ -1203,13 +1203,16 @@ Owner-requested addition. It ships before Phase 4.
 - The tutorial is not counted toward Scouting catalog coverage.
 - Tests cover the seed command, the plan flow, and the coverage exclusion.
 
-**Baden-Powell rights check (before any text ships)**
+**1911 Handbook rights check (before any text ships)**
 
-- Use the 1908 first edition, not a modern edition, annotated edition, or translation. Later editions and translations may carry their own copyright.
-- Baden-Powell died in 1941. Confirm the public-domain status for the 1908 text in the countries you care about, and record the result in an ADR.
-- Take the text from a source that states its edition, such as Project Gutenberg. Record the source URL, edition, and checked date in SourceRecord.
-- Reproduce the text exactly. Mark the entry "historical, not an official Scouting America requirement".
-- The owner picks which criteria to include. Ask before choosing.
+- Source: Project Gutenberg eBook #29558, `https://www.gutenberg.org/cache/epub/29558/pg29558-images.html`. The title page says "Copyright 1911 by Boy Scouts of America". The merit badge section ("The Merit Badges") starts after page marker {24}.
+- A work published in 1911 is in the US public domain because of its age. Gutenberg says readers outside the US must check local law. Record the result in an ADR.
+- Use the 1911 first edition only. Later editions of the handbook are not covered by this check.
+- Record the source URL, edition, Gutenberg release date, and checked date in SourceRecord.
+- Reproduce each requirement exactly, including old spelling and wording. Do not paraphrase.
+- Mark the entry "historical 1911 text, not a current or official Scouting America requirement". Do not use it for Scouting catalog coverage counts.
+- Many 1911 badges are obsolete or unsafe for today. Show a short note on that. The learner does not need to complete anything unsafe.
+- The owner picks which badges to include. Start with a small set. Ask before choosing.
 
 ## Phase 4: AI tutoring and EDGE instruction
 
