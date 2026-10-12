@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST
 
+from programs import services as program_services
 from programs.forms import VersionForm
 from programs.models import AwardVersion, ImmutableVersionError
 
@@ -15,8 +16,12 @@ from .models import RequirementNode
 Status = AwardVersion.Status
 
 
-def _version(pk):
-    return get_object_or_404(AwardVersion.objects.select_related("award", "award__program"), pk=pk)
+def _version(request, pk, edit=True):
+    """Fetch a version the user may see (404 otherwise) and, for edits, may change (403)."""
+    version = get_object_or_404(AwardVersion.objects.select_related("award", "award__program"), pk=pk)
+    program = version.award.program
+    (program_services.require_edit if edit else program_services.require_view)(request.user, program)
+    return version
 
 
 def _origin_counts(version):
@@ -30,7 +35,7 @@ def _origin_counts(version):
 @login_required
 def version_detail(request, pk):
     """Learner view: the requirement tree with its source and review labels."""
-    version = _version(pk)
+    version = _version(request, pk, edit=False)
     return render(
         request,
         "requirements/version_detail.html",
@@ -39,6 +44,7 @@ def version_detail(request, pk):
             "award": version.award,
             "tree": services.get_tree(version),
             "origin_counts": _origin_counts(version),
+            "can_edit": program_services.can_edit(request.user, version.award.program),
             "editing": False,
         },
     )
@@ -47,7 +53,7 @@ def version_detail(request, pk):
 @login_required
 def version_edit(request, pk):
     """Authoring view: the same tree with edit controls, and the publish workflow."""
-    version = _version(pk)
+    version = _version(request, pk)
     problems = []
     if version.status in (Status.DRAFT, Status.REVIEW):
         problems = services.publish_problems(version)
@@ -68,7 +74,7 @@ def version_edit(request, pk):
 @login_required
 @require_http_methods(["GET", "POST"])
 def version_meta(request, pk):
-    version = _version(pk)
+    version = _version(request, pk)
     if version.status != Status.DRAFT:
         messages.error(request, f"The version is {version.status}. Only a draft can be edited.")
         return redirect("version_edit", pk=pk)
@@ -99,7 +105,7 @@ def _refuse_if_not_draft(request, version):
 @login_required
 @require_http_methods(["GET", "POST"])
 def node_add(request, pk):
-    version = _version(pk)
+    version = _version(request, pk)
     refused = _refuse_if_not_draft(request, version)
     if refused:
         return refused
@@ -126,7 +132,8 @@ def node_add(request, pk):
 @login_required
 @require_http_methods(["GET", "POST"])
 def node_edit(request, pk):
-    node = get_object_or_404(RequirementNode.objects.select_related("award_version"), pk=pk)
+    node = get_object_or_404(RequirementNode.objects.select_related("award_version__award__program"), pk=pk)
+    program_services.require_edit(request.user, node.award_version.award.program)
     version = node.award_version
     refused = _refuse_if_not_draft(request, version)
     if refused:
@@ -149,7 +156,8 @@ def node_edit(request, pk):
 @login_required
 @require_http_methods(["GET", "POST"])
 def node_delete(request, pk):
-    node = get_object_or_404(RequirementNode.objects.select_related("award_version"), pk=pk)
+    node = get_object_or_404(RequirementNode.objects.select_related("award_version__award__program"), pk=pk)
+    program_services.require_edit(request.user, node.award_version.award.program)
     version = node.award_version
     refused = _refuse_if_not_draft(request, version)
     if refused:
@@ -171,7 +179,8 @@ def node_delete(request, pk):
 @login_required
 @require_POST
 def node_move(request, pk):
-    node = get_object_or_404(RequirementNode.objects.select_related("award_version"), pk=pk)
+    node = get_object_or_404(RequirementNode.objects.select_related("award_version__award__program"), pk=pk)
+    program_services.require_edit(request.user, node.award_version.award.program)
     direction = request.POST.get("direction")
     if direction not in ("up", "down"):
         messages.error(request, "The direction must be up or down.")
@@ -187,7 +196,7 @@ def node_move(request, pk):
 @require_http_methods(["GET", "POST"])
 def version_delete(request, pk):
     """Delete a draft or review version. Published and archived versions stay."""
-    version = _version(pk)
+    version = _version(request, pk)
     award = version.award
     if version.status in AwardVersion.LOCKED_STATUSES:
         messages.error(
@@ -221,7 +230,7 @@ WORKFLOW = {
 @login_required
 @require_POST
 def version_action(request, pk, action):
-    version = _version(pk)
+    version = _version(request, pk)
     if action == "revise":
         try:
             draft = services.create_revision(version)
@@ -271,7 +280,7 @@ def import_program(request):
                 messages.error(request, "There is no checked file to import. Upload it again.")
                 return redirect("import_program")
             try:
-                version = importer.commit_import(pending)
+                version = importer.commit_import(pending, user=request.user)
             except importer.ImportRefused as exc:
                 context["report"] = exc.report
                 messages.error(request, "The import was refused. See the report.")
@@ -290,7 +299,7 @@ def import_program(request):
             context["report"] = report
             return render(request, "requirements/import.html", context, status=400)
         raw = upload.read(importer.MAX_BYTES + 1)
-        data, report = importer.plan_import(raw)
+        data, report = importer.plan_import(raw, user=request.user)
         context["report"] = report
         context["filename"] = upload.name
         if report.can_commit:

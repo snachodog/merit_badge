@@ -48,7 +48,7 @@ def other():
 @pytest.fixture
 def progress(user):
     owner = ProgramOwner.objects.create(name="Me", slug="me", owner_type="individual")
-    program = Program.objects.create(owner=owner, name="C", slug="c", is_custom=True)
+    program = Program.objects.create(owner=owner, name="C", slug="c", is_custom=True, visibility="all")
     award = Award.objects.create(program=program, name="A", slug="a")
     v = AwardVersion.objects.create(award=award, version_label="1")
     RequirementNode.objects.create(award_version=v, display_number="1", text="t")

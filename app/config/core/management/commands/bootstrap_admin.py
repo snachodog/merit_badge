@@ -27,6 +27,10 @@ class Command(BaseCommand):
         User = get_user_model()
         existing = User.objects.filter(username=username).first()
         if existing:
+            from accounts.models import Role
+            from accounts.services import ensure_profile
+
+            ensure_profile(existing)
             if options["reset_password"]:
                 existing.set_password(password)
                 existing.save(update_fields=["password"])
@@ -37,5 +41,10 @@ class Command(BaseCommand):
                     "Add --reset-password to set it from BOOTSTRAP_ADMIN_PASSWORD."
                 )
             return
-        User.objects.create_superuser(username=username, email=email, password=password)
+        user = User.objects.create_superuser(username=username, email=email, password=password)
+        from accounts.models import Role
+        from accounts.services import ensure_profile, set_role
+
+        ensure_profile(user)
+        set_role(None, user, Role.ADMIN)
         self.stdout.write(self.style.SUCCESS(f"Created superuser '{username}'."))

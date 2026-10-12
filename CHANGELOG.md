@@ -4,6 +4,18 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+### Added
+- Sign in with OIDC (Authentik, Keycloak and others). Admins set it up in Settings > OIDC. It uses PKCE and checks the ID token. It never creates an account by itself: people link it through an invitation or in Settings. Password sign-in always works. New `OIDC_*` variables can pre-fill the settings.
+- Invitations: an admin creates a single-use link in Settings, picks the role and the expiry (1 to 30 days, default 7), and sees the link once. The link is stored only as a hash. The person opens it, picks a username and password, and is signed in. Admins can revoke links. Invitation events are audited.
+- Roles: admin and user. The first user, and every staff or superuser, is an admin. Admins manage users in Settings: change role, deactivate, reactivate, reset a password. The last active admin cannot be demoted, deactivated or deleted. Account changes are audited.
+- Every signed-in user can create, import and edit their own programs. Programs have a visibility: private, shared with chosen users, or shared with all. Only admins change it. Others get a 404 for programs they cannot see. Existing custom programs go to the first admin as private. Seeded programs are visible to all.
+- My Learning starts the "How to use Merit Badge" plan for you, once. A plan you archive or abandon is not recreated.
+- The plan page has a checklist with Mark done and Undo. The requirement page has the same buttons. The usual evidence rules still apply and a refusal explains why.
+- My Learning shows "X of Y done" for each plan.
+- Tutorial version 1.1. Existing plans stay on 1.0.
+
+### Changed
+- Learner pages no longer show "Not official text" or action-tag badges. "Official text" shows only for official text. Tags show in the editor as "Action tag".
 
 ## [0.5.1] - 2026-10-12
 ### Fixed

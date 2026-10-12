@@ -50,7 +50,10 @@ docker compose run --rm \
 If the user already exists, the command does not change the password. To set a new one, add
 `--reset-password` to the command.
 
-Then log in at `/accounts/login/`. Further users can be added in the Django admin
+Then log in at `/accounts/login/`. The first user is an admin. Admins manage users under
+Settings, Users: role, deactivate, reactivate and password reset. At least one active admin must
+always remain. Each user authors only their own programs, which stay private. Admins can share a
+program with chosen users or all users on its page. You can also add users in the Django admin
 at `/admin/`. Avoid leaving `BOOTSTRAP_ADMIN_PASSWORD` in `.env` after use.
 
 ## Run from the published image
@@ -173,6 +176,10 @@ services:
       BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
       BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
       EVIDENCE_MAX_UPLOAD_MB: ${EVIDENCE_MAX_UPLOAD_MB:-25}
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+      OIDC_ENABLED: ${OIDC_ENABLED:-false}
     volumes:
       - media:/data/media          # evidence uploads: back this up with the database
     networks: [backend, frontend]
@@ -208,6 +215,34 @@ volumes:
 ```
 
 Back up both volumes (`pgdata` and `media`). See `docs/operations.md`.
+
+## Sign in with OIDC
+
+OIDC is optional. You can let people sign in through your identity provider, such as Authentik or Keycloak. Password sign-in always stays available.
+
+OIDC never creates an account on its own. A person links OIDC in one of two ways:
+
+- They accept an invitation and choose "Sign up with OIDC".
+- They are signed in and choose "Link OIDC account" in Settings.
+
+The app never matches people by e-mail address. A deactivated user cannot sign in.
+
+To set it up:
+
+1. At your provider, create an OIDC application with the authorization-code flow. Use a confidential client.
+2. Register the redirect URI. It is your site address plus `/oidc/callback/`, for example `https://merit.example.com/oidc/callback/`. Settings > OIDC shows the exact value.
+3. In Settings > OIDC (admin only), enter the issuer URL, client ID and client secret. The issuer URL is the address that serves `/.well-known/openid-configuration`.
+   - Authentik: `https://auth.example.com/application/o/<application-slug>/`
+   - Keycloak: `https://auth.example.com/realms/<realm>`
+4. Select "Test discovery". Then turn on "Enable OIDC sign-in" and save.
+
+The issuer URL must use `https://`. Only `localhost` may use `http://`. The app uses PKCE (S256) and checks state, nonce, signature, issuer, audience and expiry.
+
+You can pre-fill the first settings with `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` and `OIDC_ENABLED` in `.env`. They apply once, when the settings row is first created. After that, Settings is the source of truth.
+
+The client secret is stored encrypted. The key comes from `DJANGO_SECRET_KEY`. The secret is never shown again. A blank secret field keeps the current one.
+
+If you change `DJANGO_SECRET_KEY`, the stored secret cannot be read. OIDC sign-in turns off until you enter the secret again in Settings > OIDC. Password sign-in is not affected.
 
 ## Interface and CSS build
 
@@ -251,6 +286,18 @@ Traefik, ...) and forward to `WEB_BIND:WEB_PORT`. Proxy requirements:
   the app port to untrusted networks without TLS.
 - PostgreSQL is never published to the host.
 - Private evidence files must never be served directly by the proxy from the media volume.
+
+## Invite a user
+
+Only an admin can invite people. There is no public sign-up.
+
+1. Open Settings, then Invitations.
+2. Choose the role, the number of days the link stays valid (1 to 30), and an optional note.
+3. Select Create invitation.
+4. Copy the link on the next page and send it to the person. The page shows the link once. The app stores only a hash.
+5. The person opens the link, picks a username and password, and is signed in.
+
+A link works once. If it expires or you lose it, revoke it in the same list and create a new one.
 
 ## Upgrading
 
@@ -319,6 +366,11 @@ docker compose exec web python manage.py seed_tutorial
 ```
 
 The command is safe to run again. It never changes a published version or your progress.
+The tutorial is version 1.1. Plans started on 1.0 stay on 1.0. My Learning starts your tutorial plan
+once, on your first visit. If you archive it, the app does not make another.
+
+Use the Checklist on a plan page to mark requirements done, or the same buttons at the top of a
+requirement page. The evidence rules still apply.
 
 ## Import from JSON
 

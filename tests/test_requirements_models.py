@@ -21,7 +21,7 @@ Status = AwardVersion.Status
 @pytest.fixture
 def award():
     owner = ProgramOwner.objects.create(name="Me", slug="me", owner_type="individual")
-    program = Program.objects.create(owner=owner, name="Custom", slug="custom", is_custom=True)
+    program = Program.objects.create(owner=owner, name="Custom", slug="custom", is_custom=True, visibility="all")
     return Award.objects.create(program=program, name="Bread", slug="bread")
 
 

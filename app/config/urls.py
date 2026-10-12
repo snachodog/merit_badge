@@ -15,6 +15,9 @@ urlpatterns = [
     path("settings/", views.settings_page, name="settings"),
     path("settings/export.json", views.export_json, name="export_json"),
     path("settings/evidence-files.zip", views.export_evidence_zip, name="export_evidence_zip"),
+    path("", include("accounts.urls")),
+    path("", include("oidc.urls")),
+    path("", include("invitations.urls")),
     path("", include("programs.urls")),
     # learning before requirements: "versions/<pk>/start/" must not match the version actions.
     path("", include("learning.urls")),

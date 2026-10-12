@@ -1,0 +1,14 @@
+{% if available or linked %}
+<h3>OIDC sign-in</h3>
+{% if linked %}
+  <p>Your account is linked to an OIDC identity.</p>
+  {% if has_password %}
+  <form method="post" action="{% url 'oidc_unlink' %}">{% csrf_token %}<button type="submit" class="btn btn-outline">Unlink OIDC account</button></form>
+  {% else %}
+  <p>You have no password, so you cannot unlink. Ask an admin to reset your password first.</p>
+  {% endif %}
+{% else %}
+  <p>Link your OIDC account to sign in with it. You sign in at the provider once to confirm.</p>
+  <form method="post" action="{% url 'oidc_link' %}">{% csrf_token %}<button type="submit" class="btn btn-outline">Link OIDC account</button></form>
+{% endif %}
+{% endif %}

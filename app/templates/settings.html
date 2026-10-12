@@ -2,6 +2,7 @@
 {% block title %}Settings{% endblock %}
 {% block content %}
 <h1>Settings</h1>
+{% load accounts_tags %}
 <div class="vstack">
   <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="prof-h">
     <h2 id="prof-h">Profile</h2>
@@ -10,6 +11,7 @@
       {% include "catalog/_form_fields.html" %}
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
+    {% load oidc_tags %}{% oidc_link_section %}
   </section>
   <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="exp-h">
     <h2 id="exp-h">Export your data</h2>
@@ -23,5 +25,10 @@
     <h2 id="del-h">Delete your data</h2>
     <p>This is not built yet. To remove one piece of evidence, use its Delete link on the requirement page.</p>
   </section>
+  {% if user|is_admin %}
+  {% include "settings/_users.html" %}
+  {% include "settings/_invitations.html" %}
+  {% include "settings/_oidc.html" %}
+  {% endif %}
 </div>
 {% endblock %}

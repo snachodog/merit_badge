@@ -1,0 +1,6 @@
+{% if show %}
+<div class="mt-4 max-w-sm">
+  <p class="text-sm">Or sign in with your identity provider.</p>
+  <a class="btn btn-outline mt-2" href="{% url 'oidc_login' %}">{{ label }}</a>
+</div>
+{% endif %}

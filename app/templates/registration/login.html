@@ -10,5 +10,6 @@
     <input type="hidden" name="next" value="{{ next }}">
     <button type="submit" class="btn btn-primary mt-4">Log in</button>
   </form>
+  {% load oidc_tags %}{% oidc_login_button %}
 </div>
 {% endblock %}

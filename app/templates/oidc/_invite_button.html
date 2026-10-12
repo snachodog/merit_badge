@@ -1,0 +1,3 @@
+{% if show %}
+<p><a class="btn btn-outline" href="{% url 'oidc_login' %}?intent=invite">Sign up with OIDC{% if label %} ({{ label }}){% endif %}</a></p>
+{% endif %}

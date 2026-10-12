@@ -1,0 +1,11 @@
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="oidc-h">
+  <h2 id="oidc-h">OIDC sign-in</h2>
+  <p>OIDC lets people sign in through your identity provider (for example Authentik or Keycloak). It never creates an account on its own. People link it through an invitation or in their Settings.</p>
+  <p><strong>Password sign-in stays available</strong> whether OIDC is on or off.</p>
+  <p>Register this redirect URI at your provider: <code>{{ oidc_redirect_uri }}</code></p>
+  {% include "oidc/_form.html" %}
+  <form method="post" action="{% url 'oidc_test' %}">{% csrf_token %}
+    <button type="submit" class="btn btn-outline">Test discovery</button>
+    <span class="helptext">Checks the saved issuer URL. Save changes first.</span>
+  </form>
+</section>

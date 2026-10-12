@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_http_methods
 
+from accounts import services as account_services
+from accounts.views import users_context
 from achievements import services
 
 from . import export
@@ -53,7 +55,10 @@ def settings_page(request):
         services.set_display_name(request.user, form.cleaned_data["display_name"])
         messages.success(request, "Display name saved. Existing certificates keep the name they were issued with.")
         return redirect("settings")
-    return render(request, "settings.html", {"form": form})
+    context = {"form": form}
+    if account_services.is_admin(request.user):
+        context.update(users_context())
+    return render(request, "settings.html", context)
 
 
 @login_required

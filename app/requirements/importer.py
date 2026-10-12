@@ -482,7 +482,7 @@ def _owner_values(owner):
     }
 
 
-def plan_import(raw_or_data):
+def plan_import(raw_or_data, user=None):
     """Check a file and say what an import would do. Makes no database changes.
 
     Accepts bytes or text (parsed here) or already-parsed data.
@@ -515,6 +515,12 @@ def plan_import(raw_or_data):
     )
     label = data["version"]["label"]
     version_row = AwardVersion.objects.filter(award=award, version_label=label).first() if award else None
+
+    if program is not None and user is not None:
+        from programs import services as program_services
+
+        if not program_services.can_edit(user, program):
+            report.error("program.slug", "A program with this owner and slug already exists and you cannot edit it. Change the slug.")
 
     if owner is None:
         report.creates.append(f"Program owner: {owner_values['name']}")
@@ -608,12 +614,13 @@ def _version_values(v):
 
 
 @transaction.atomic
-def commit_import(raw_or_data):
+def commit_import(raw_or_data, user=None):
+    """`user` is the creator of a new program. Without a user the program is a system program visible to all."""
     """Run the import. Raises ImportRefused if there are errors, conflicts or nothing to do.
 
     Returns the draft AwardVersion.
     """
-    data, report = plan_import(raw_or_data)
+    data, report = plan_import(raw_or_data, user=user)
     if not report.can_commit:
         raise ImportRefused(report)
     # Lock the import key row (if any) so two imports cannot interleave.
@@ -636,6 +643,8 @@ def commit_import(raw_or_data):
             "description": p.get("description", ""),
             "is_custom": p.get("is_custom", p["owner"] == "self"),
             "status": Program.Status.ACTIVE,
+            "created_by": user,
+            "visibility": Program.Visibility.PRIVATE if user else Program.Visibility.ALL,
         },
     )
     a = data["award"]

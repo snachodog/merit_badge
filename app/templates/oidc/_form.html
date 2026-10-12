@@ -1,0 +1,4 @@
+<form method="post" action="{% url 'oidc_settings' %}" class="max-w-xl">{% csrf_token %}
+  {% include "catalog/_form_fields.html" with form=oidc_form %}
+  <button type="submit" class="btn btn-primary mt-3">Save OIDC settings</button>
+</form>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}OIDC settings{% endblock %}
+{% block content %}
+<h1>OIDC settings</h1>
+<p><a href="{% url 'settings' %}">Back to Settings</a></p>
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
+  <p>Register this redirect URI at your provider: <code>{{ oidc_redirect_uri }}</code></p>
+  {% include "oidc/_form.html" %}
+</section>
+{% endblock %}

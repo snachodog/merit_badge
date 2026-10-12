@@ -6,7 +6,7 @@
   <div class="alert alert-info flex-col items-start gap-1" role="note">
     <p><strong>New here?</strong> Take the short tour to learn the app by using it.</p>
     {% if tutorial_version %}
-    <p><a class="btn btn-primary btn-sm" href="{% url 'version_detail' tutorial_version.pk %}">Open "How to use Merit Badge"</a></p>
+    <p><a class="btn btn-primary btn-sm" href="{% url 'my_learning' %}">Open "How to use Merit Badge" in My Learning</a></p>
     {% else %}
     <p>The tutorial is not loaded yet. Run <code>docker compose exec web python manage.py seed_tutorial</code>, then reload this page.</p>
     {% endif %}

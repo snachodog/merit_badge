@@ -1,0 +1,37 @@
+{% comment %}Users table. Needs `users` and `roles` in the context. Admin only.{% endcomment %}
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="users-h">
+  <h2 id="users-h">Users</h2>
+  <p>You see names, roles and status only. You cannot see anyone's plans, notes or evidence. At least one active admin must always remain.</p>
+  <div class="overflow-x-auto">
+    <table class="table table-sm">
+      <caption class="sr-only">Users</caption>
+      <thead><tr><th scope="col">Username</th><th scope="col">Name</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Last sign-in</th><th scope="col">Actions</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+        <tr>
+          <th scope="row">{{ u.get_username }}</th>
+          <td>{{ u.get_full_name|default:"-" }}</td>
+          <td>
+            <form method="post" action="{% url 'user_role' u.pk %}" class="flex gap-1 items-center">{% csrf_token %}
+              <label class="sr-only" for="role-{{ u.pk }}">Role for {{ u.get_username }}</label>
+              <select name="role" id="role-{{ u.pk }}" class="select select-bordered select-sm">
+                {% for value, label in roles %}<option value="{{ value }}"{% if u.profile.role == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+              </select>
+              <button type="submit" class="btn btn-sm btn-outline">Save role</button>
+            </form>
+          </td>
+          <td>{% if u.is_active %}Active{% else %}Deactivated{% endif %}</td>
+          <td>{% if u.last_login %}{{ u.last_login|date:"Y-m-d H:i" }}{% else %}Never{% endif %}</td>
+          <td class="flex flex-wrap gap-1">
+            <form method="post" action="{% url 'user_active' u.pk %}">{% csrf_token %}
+              {% if u.is_active %}<button type="submit" class="btn btn-sm btn-outline btn-warning">Deactivate</button>
+              {% else %}<input type="hidden" name="active" value="1"><button type="submit" class="btn btn-sm btn-outline">Reactivate</button>{% endif %}
+            </form>
+            <a class="btn btn-sm btn-outline" href="{% url 'user_password' u.pk %}">Reset password</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
