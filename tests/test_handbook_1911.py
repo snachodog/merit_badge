@@ -19,9 +19,9 @@ DATA = ROOT / "app/programs/data/handbook_1911"
 SCHEMA = json.loads((ROOT / "docs/schemas/program-import.schema.json").read_text())
 
 # Counted in the Project Gutenberg #29558 HTML: 57 centered bold badge headings
-# between the {24} page marker and "Life Scout". 56 have a "To obtain a merit
-# badge for X" lead-in. Scholarship has only a NOTE (no requirements decided in 1911).
-SOURCE_BADGE_COUNT = 57
+# between the {24} page marker and "Life Scout". Scholarship has only a printed
+# NOTE and no requirements, so it is not imported. 56 badges are imported.
+SOURCE_BADGE_COUNT = 56
 
 
 def files():
@@ -159,10 +159,10 @@ def test_page_markers_are_removed_but_wording_is_kept():
     assert not RequirementNode.objects.filter(text__regex=r"\{\d+\}").exists()
 
 
-def test_scholarship_keeps_the_printed_note():
+def test_scholarship_is_not_imported():
     run()
-    node = AwardVersion.objects.get(award__slug="scholarship").nodes.get()
-    assert node.node_type == "note" and node.text.startswith("NOTE: The requirements for the merit badge")
+    assert not (DATA / "scholarship.json").exists()
+    assert not Award.objects.filter(slug="scholarship").exists()
 
 
 def test_not_in_scouting_catalog_coverage():

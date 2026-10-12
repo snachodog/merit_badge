@@ -347,7 +347,7 @@ The importer stores `evidence_expectations` (a list of short text labels) on eac
 
 ## 1911 Handbook badges
 
-The 57 merit badges of the *Boy Scouts Handbook*, First Edition, 1911 (Project Gutenberg #29558) are in `app/programs/data/handbook_1911/`. The text is historical, not a current or official Scouting America requirement. Many badges are obsolete or unsafe today. You do not need to do anything unsafe. The book is in the US public domain because of its age. Outside the US, check your local law. This is not legal advice (see `docs/decisions/0005-1911-handbook-source.md`).
+The 56 merit badges of the *Boy Scouts Handbook*, First Edition, 1911 (Project Gutenberg #29558) are in `app/programs/data/handbook_1911/`. The text is historical, not a current or official Scouting America requirement. Many badges are obsolete or unsafe today. You do not need to do anything unsafe. The book is in the US public domain because of its age. Outside the US, check your local law. This is not legal advice (see `docs/decisions/0005-1911-handbook-source.md`).
 
 ```sh
 docker compose exec web python manage.py import_handbook_1911 --dry-run

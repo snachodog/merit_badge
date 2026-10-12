@@ -88,7 +88,9 @@ def parse_badges(source_html):
     for i, m in enumerate(heads[:end_index]):
         seg_end = heads[i + 1].start()
         blocks = to_blocks(source_html[m.end():seg_end])
-        badges.append(parse_badge(names[i], blocks))
+        badge = parse_badge(names[i], blocks)
+        if badge:
+            badges.append(badge)
     return badges
 
 
@@ -104,7 +106,8 @@ def parse_badge(name, blocks):
                 raise ValueError(f"{name}: requirement number gap at {num.group(1)}")
             reqs.append({"display_number": num.group(1), "text": num.group(2)})
         elif text.startswith("NOTE:") and not reqs:
-            reqs.append({"node_type": "note", "text": text})
+            # Scholarship has only a printed note and no requirements. Skip it.
+            return None
         else:
             raise ValueError(f"{name}: unexpected paragraph: {text[:80]!r}")
     if not reqs:

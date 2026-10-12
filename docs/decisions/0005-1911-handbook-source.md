@@ -20,5 +20,5 @@ Status: Accepted (rights check done; import stays draft until the owner reviews 
 
 ## Consequences
 - The owner must check the text badge by badge against Gutenberg before publishing.
-- Scholarship has no requirements in the book, only a printed note. It is stored as a note.
+- Scholarship has no requirements in the book, only a printed note. It is not imported.
 - Some lead-ins differ from the usual form and are kept as printed: Music ("a. scout must"), Seamanship (no "a scout must"), Chemistry ("must be able to pass the following test:"), and Firemanship, Gardening and Interpreting (comma before "a scout").
