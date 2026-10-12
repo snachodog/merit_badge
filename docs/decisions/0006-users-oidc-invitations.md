@@ -8,7 +8,8 @@ Phase 3b adds a second user, OIDC sign-in and invitation links. The app stays se
 
 ## Decision
 - **Roles.** Two roles: `admin` and `user`. A new `accounts` app holds a profile with the role. Django `is_staff` and `is_superuser` stay as they are. The first user (bootstrap) is an admin.
-- **Admin only:** the Settings sections Users, Invitations and OIDC, plus catalog authoring (create program, import JSON, edit and publish versions). **Users:** browse the catalog, run their own plans, keep their own evidence and achievements.
+- **Admin only:** the Settings sections Users, Invitations and OIDC, and changing who can see a program. **All users:** browse the catalog they may see, author their own programs (create, import JSON, edit, publish), run their own plans, and keep their own evidence and achievements.
+- **Program visibility.** A program has a creator (`created_by`; empty means a system or seeded program) and a visibility: `private`, `shared` (chosen users, table `ProgramShare`) or `all`. A user's own programs are always private. Only an admin changes visibility. A user sees their own programs, programs shared with them, and programs shared with all; others give 404. The creator edits their program. An admin also edits system programs, but not another user's private program. A plan stays valid if its program later becomes less visible.
 - **Privacy.** Admins have no route to another user's evidence, notes or plans. User management shows names, roles and status only.
 - **Library.** Use Authlib (`authlib`) for the OIDC authorization-code flow with PKCE and discovery. Add `httpx` only if Authlib needs it.
 - **OIDC settings live in the database**, one row, edited in Settings. A Settings tab needs live edits and a restart would be a poor fit. The client secret is encrypted at rest with a key derived from `DJANGO_SECRET_KEY` and is write-only in the UI. Environment variables may pre-fill the row on first start (`OIDC_*` in `.env.example`).
@@ -21,4 +22,4 @@ Phase 3b adds a second user, OIDC sign-in and invitation links. The app stays se
 - One new dependency (Authlib, plus `cryptography` for the secret). Both are pinned.
 - If `DJANGO_SECRET_KEY` changes, the stored OIDC secret cannot be read. The admin enters it again. Document this in the README.
 - Existing single-user installs keep working. Their first user becomes the admin by migration.
-- Catalog authoring becomes admin only. A user who needs a custom program asks an admin.
+- The migration gives each existing user-authored program (owner `self`) to the first admin, private. Seeded and imported system programs become visible to all.

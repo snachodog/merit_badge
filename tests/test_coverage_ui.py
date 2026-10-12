@@ -17,7 +17,7 @@ def program(client):
     user = get_user_model().objects.create_user("u", password="x")
     client.force_login(user)
     owner = ProgramOwner.objects.create(name="O", slug="o", owner_type="organization")
-    p = Program.objects.create(owner=owner, name="Prog", slug="prog")
+    p = Program.objects.create(owner=owner, name="Prog", slug="prog", visibility="all")
     for i in range(2):
         a = Award.objects.create(program=p, name=f"A{i}", slug=f"a{i}", award_type="merit_badge")
         v = AwardVersion.objects.create(award=a, version_label="v1")

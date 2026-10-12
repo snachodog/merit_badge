@@ -18,6 +18,7 @@
       <a href="{% url 'plan_detail' plan.pk %}">{{ plan.title }}</a>
       <span class="badge badge-outline">{{ plan.get_status_display }}</span>
       <span>Version {{ plan.award_version.version_label }}</span>
+      {% if plan.done_count is not None %}<span>{{ plan.done_count }} of {{ plan.total_count }} done</span>{% endif %}
       {% if plan.target_date %}<span>Target: {{ plan.target_date|date:"Y-m-d" }}</span>{% endif %}
     </li>
     {% endfor %}

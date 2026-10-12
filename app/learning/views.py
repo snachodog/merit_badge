@@ -1,6 +1,8 @@
 """Learner screens. Every query is scoped to the signed-in user (404 for others)."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from programs import services as program_services
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
 
@@ -28,7 +30,11 @@ PLAN_ACTIONS = {
 
 @login_required
 def my_learning(request):
+    services.ensure_tutorial_plan(request.user)
     plans = list(selectors.plans_for(request.user).select_related("award_version__award__program"))
+    for p in plans:
+        summary = services.plan_summary(p)
+        p.done_count, p.total_count = summary.requirements_complete, summary.requirements_total
     groups = [
         ("Active", [p for p in plans if p.status in (PS.ACTIVE, PS.PLANNED)]),
         ("Paused", [p for p in plans if p.status == PS.PAUSED]),
@@ -48,6 +54,7 @@ def plan_start(request, pk):
     version = get_object_or_404(
         AwardVersion.objects.select_related("award", "award__program"), pk=pk
     )
+    program_services.require_view(request.user, version.award.program)
     if version.status != AwardVersion.Status.PUBLISHED:
         messages.error(request, "You can only start a plan from a published version.")
         return redirect("version_detail", pk=version.pk)
@@ -93,11 +100,33 @@ def _condition_rows(plan):
     return rows
 
 
+def _checklist(tree):
+    """Flat list of leaf rows that take a status, in reading order."""
+    out = []
+    for r in tree:
+        if r["leaf"] and r["progress"] and r["key"] not in ("note", "not_applicable"):
+            out.append(r)
+        out.extend(_checklist(r["children"]))
+    return out
+
+
+def _blocked_progress(request, plan):
+    """The requirement whose Mark done was refused, so the page can link to it."""
+    raw = request.GET.get("blocked", "")
+    if not raw.isdigit():
+        return None
+    return RequirementProgress.objects.filter(pk=int(raw), learning_plan=plan).select_related(
+        "requirement_node"
+    ).first()
+
+
 @login_required
 def plan_detail(request, pk):
     plan = selectors.get_plan_for(request.user, pk)
     ctx = presenters.plan_context(plan)
     ctx.update(
+        checklist=_checklist(ctx["tree"]),
+        blocked_progress=_blocked_progress(request, plan),
         conditions=_condition_rows(plan),
         can_complete=plan.status == PS.ACTIVE and ctx["summary"].satisfied,
         transitions=sorted(
@@ -225,7 +254,8 @@ def progress_detail(request, pk):
         "children": children,
         "parent_progress_id": parent_progress.pk if parent_progress else None,
         "guidance": guidance.guidance_for(tags),
-        "tags": tags,
+        "can_check": leaf and plan.status == PS.ACTIVE
+        and progress.status not in (RS.NOT_APPLICABLE,),
         "counting_types": sorted(labels[t] for t in counting),
         "evidence": progress.evidence_records.all(),
         "can_log": "log" in tags or "time_log" in counting,
@@ -256,6 +286,33 @@ def progress_status(request, pk):
     else:
         messages.error(request, "Choose a status from the list.")
     return redirect("progress_detail", pk=progress.pk)
+
+
+@login_required
+@require_POST
+def progress_check(request, pk):
+    """One-click Mark done or Undo. Uses the same rules as the status form."""
+    progress = selectors.get_progress_for(request.user, pk)
+    plan = progress.learning_plan
+    done = request.POST.get("do") != "undo"
+    target = RS.PERSONALLY_COMPLETED if done else RS.IN_PROGRESS
+    back = request.POST.get("next") == "requirement"
+    refused = False
+    try:
+        services.set_progress_status(progress, target)
+    except services.LearningError as exc:
+        messages.error(request, str(exc))
+        refused = True
+    else:
+        messages.success(
+            request, "Marked done." if done else "Marked as in progress. Your work is kept."
+        )
+    if back:
+        return redirect("progress_detail", pk=progress.pk)
+    url = reverse("plan_detail", args=[plan.pk])
+    if refused:
+        url += f"?blocked={progress.pk}"
+    return redirect(f"{url}#req-{progress.pk}")
 
 
 @login_required

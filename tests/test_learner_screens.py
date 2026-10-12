@@ -214,7 +214,7 @@ def test_requirement_page_sections_and_tag_guidance(logged, plan_setup):
         assert h in html
     assert "A text answer alone is not a demonstration" in html
     assert "Explanatory, not official" in html
-    assert "Not official text" in html
+    assert "Not official text" not in html
 
 
 def test_interview_guidance_rejects_ai_chat(logged, user, award):

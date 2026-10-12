@@ -4,8 +4,10 @@ Nothing here is specific to one organization. Choice values come from
 PLAN.md section 6. Version immutability rules are described in
 docs/decisions/0003-content-version-model.md.
 """
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 
 class ImmutableVersionError(Exception):
@@ -43,6 +45,16 @@ class ProgramOwner(TimestampedModel):
         return self.name
 
 
+class ProgramQuerySet(models.QuerySet):
+    def visible_to(self, user):
+        """Programs this user may see: their own, shared with them, and shared with all."""
+        return self.filter(
+            Q(visibility=Program.Visibility.ALL)
+            | Q(created_by=user)
+            | Q(visibility=Program.Visibility.SHARED, shares__user=user)
+        ).distinct()
+
+
 class Program(TimestampedModel):
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
@@ -50,10 +62,18 @@ class Program(TimestampedModel):
         ARCHIVED = "archived", "Archived"
 
     class Visibility(models.TextChoices):
-        # Sharing and public values are future work (PLAN.md section 6.2).
-        PRIVATE = "private", "Private"
+        PRIVATE = "private", "Private (only the creator)"
+        SHARED = "shared", "Shared with chosen users"
+        ALL = "all", "Shared with all users"
+
+    objects = ProgramQuerySet.as_manager()
 
     owner = models.ForeignKey(ProgramOwner, on_delete=models.PROTECT, related_name="programs")
+    # Null means a system program (seeded or imported by the command line).
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="created_programs",
+    )
     name = models.CharField(max_length=200)
     slug = models.SlugField()
     program_type = models.CharField(max_length=100, blank=True)
@@ -85,6 +105,16 @@ class Program(TimestampedModel):
 
     def __str__(self):
         return self.name
+
+
+class ProgramShare(models.Model):
+    """Grants one user access to a program whose visibility is "shared"."""
+
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name="shares")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="program_shares")
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["program", "user"], name="program_share_unique")]
 
 
 class Award(TimestampedModel):

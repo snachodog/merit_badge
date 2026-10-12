@@ -58,3 +58,23 @@ class VersionForm(forms.ModelForm):
         if clash.exists():
             raise forms.ValidationError("This award already has a version with that label.")
         return label
+
+
+class SharingForm(forms.Form):
+    visibility = forms.ChoiceField(choices=Program.Visibility.choices, label="Who can see this program")
+    users = forms.ModelMultipleChoiceField(
+        queryset=None, required=False, label="Shared with these users",
+        help_text="Used only when sharing with chosen users.",
+    )
+
+    def __init__(self, *args, program, **kwargs):
+        super().__init__(*args, **kwargs)
+        from django.contrib.auth import get_user_model
+
+        self.fields["users"].queryset = (
+            get_user_model().objects.filter(is_active=True).exclude(pk=program.created_by_id).order_by("username")
+        )
+        self.initial = {
+            "visibility": program.visibility,
+            "users": list(program.shares.values_list("user_id", flat=True)),
+        }

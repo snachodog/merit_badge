@@ -24,7 +24,7 @@ def logged(client, user):
 @pytest.fixture
 def version():
     owner = ProgramOwner.objects.create(name="Me", slug="self", owner_type="individual")
-    program = Program.objects.create(owner=owner, name="Gardening Club", slug="gc", is_custom=True)
+    program = Program.objects.create(owner=owner, name="Gardening Club", slug="gc", is_custom=True, visibility="all")
     award = Award.objects.create(program=program, name="Herb Grower", slug="herb", description="Grow herbs")
     return AwardVersion.objects.create(award=award, version_label="v1")
 
@@ -54,8 +54,8 @@ def test_nested_display_shows_numbers_logic_tags_and_labels(logged, version):
     assert "If age is 10, complete these" in html
     assert "1a" in html and "Plant basil." in html
     assert "Official text" in html
-    assert "Not official text: app-authored" in html
-    assert "Plan" in html
+    assert "Not official text" not in html
+    assert "Action tag" not in html
     assert "My notes" in html
     assert "Unverified" in html  # content review label
     assert html.count("<ol") >= 3  # nested lists

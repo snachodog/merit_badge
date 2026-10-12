@@ -320,3 +320,31 @@ def save_learner_notes(progress, notes):
     progress.learner_notes = notes
     progress.save(update_fields=["learner_notes", "updated_at"])
     return progress
+
+
+# Tutorial ------------------------------------------------------------------------
+
+def ensure_tutorial_plan(user):
+    """Give the user a started tutorial plan once. Returns the plan, or None.
+
+    Does nothing if the tutorial is not seeded, or if the user ever had a plan for
+    it (including one they archived or abandoned). Uses the newest published version.
+    """
+    from programs import tutorial
+
+    awards = AwardVersion.objects.filter(
+        award__program__owner__slug=tutorial.OWNER_SLUG,
+        award__program__slug=tutorial.PROGRAM_SLUG,
+        award__slug=tutorial.AWARD_SLUG,
+    )
+    if LearningPlan.objects.filter(user=user, award_version__in=awards).exists():
+        return None
+    version = (
+        awards.filter(status=AwardVersion.Status.PUBLISHED)
+        .order_by("-published_at", "-pk").first()
+    )
+    if version is None:
+        return None
+    with transaction.atomic():
+        plan = start_plan(create_plan(user, version))
+    return plan

@@ -31,6 +31,8 @@ def seed():
                 "description": spec.description,
                 "status": Program.Status.DRAFT,
                 "is_custom": False,
+                "visibility": Program.Visibility.ALL,
+                "created_by": None,
                 "catalog_source_url": spec.catalog_source_url,
                 "catalog_expected_count": None,
                 "catalog_validated_complete": False,

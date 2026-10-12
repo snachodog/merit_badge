@@ -43,6 +43,31 @@
   </section>
   {% endif %}
 
+  <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="check-h">
+    <h2 id="check-h">Checklist</h2>
+    {% if blocked_progress %}
+    <p class="note note-warning">Requirement {{ blocked_progress.requirement_node.display_number }} was not marked done.
+    <a href="{% url 'progress_detail' blocked_progress.pk %}">Open the requirement to add evidence or record your own statement</a>.</p>
+    {% endif %}
+    {% if plan.status != 'active' %}
+      {% if plan.status == 'planned' %}
+      <form method="post" action="{% url 'plan_action' plan.pk 'resume' %}">{% csrf_token %}<button class="btn btn-primary" type="submit">Start the plan</button></form>
+      {% elif plan.status == 'paused' or plan.status == 'abandoned' %}
+      <p>Resume the plan to check off requirements.</p>
+      {% endif %}
+    {% endif %}
+    <ul class="checklist">
+      {% for r in checklist %}
+      <li id="req-{{ r.progress.pk }}" class="flex flex-wrap items-center gap-2 py-1">
+        <span class="num">{{ r.node.display_number }}</span>
+        <a href="{% url 'progress_detail' r.progress.pk %}" class="grow">{{ r.node.text|truncatechars:90 }}</a>
+        <span class="badge badge-outline {% if r.key == 'personally_completed' %}badge-success{% endif %}">{{ r.label }}</span>
+        {% if plan.status == 'active' %}{% include "learning/_mark_controls.html" with progress=r.progress next="plan" %}{% endif %}
+      </li>
+      {% empty %}<li>No single requirements to check off.</li>{% endfor %}
+    </ul>
+  </section>
+
   <section aria-labelledby="tree-h">
     <h2 id="tree-h">Requirements</h2>
     <ol class="req-tree">{% for row in tree %}{% include "learning/_plan_row.html" with row=row %}{% endfor %}</ol>

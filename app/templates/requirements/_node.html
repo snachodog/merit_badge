@@ -7,11 +7,10 @@
   </div>
   {% if node.completion_logic != 'single' %}<p class="logic">{{ node|logic_label }}</p>{% endif %}
   <div class="meta">
-    {% if node.text_origin == 'official_source' %}<span class="badge badge-outline badge-success">Official text</span>
-    {% else %}<span class="badge badge-outline">Not official text: {{ node.get_text_origin_display|lower }}</span>{% endif %}
+    {% if node.text_origin == 'official_source' %}<span class="badge badge-outline badge-success">Official text</span>{% endif %}
     {% if node.node_type != 'atomic' %}<span class="badge badge-outline">{{ node.get_node_type_display }}</span>{% endif %}
-    {% for tag in node.action_tags.all %}<span class="badge badge-outline" >{{ tag.get_tag_display }}{% if not tag.reviewed %} (unreviewed tag){% endif %}</span>{% endfor %}
-    {% if node.source %}<span>Source: {% if node.source.url %}<a href="{{ node.source.url }}" rel="noopener noreferrer">{{ node.source.title }}</a>{% else %}{{ node.source.title }}{% endif %} ({{ node.source.get_review_status_display|lower }})</span>
+    {% if editing %}{% for tag in node.action_tags.all %}<span class="badge badge-outline">Action tag: {{ tag.get_tag_display }}{% if not tag.reviewed %} (unreviewed){% endif %}</span>{% endfor %}{% endif %}
+    {% if node.source and node.text_origin == 'official_source' %}<span>Source: {% if node.source.url %}<a href="{{ node.source.url }}" rel="noopener noreferrer">{{ node.source.title }}</a>{% else %}{{ node.source.title }}{% endif %} ({{ node.source.get_review_status_display|lower }})</span>
     {% elif node.text_origin == 'official_source' %}<span class="badge badge-outline badge-warning">No source recorded</span>{% endif %}
     {% if node.estimated_effort %}<span>Estimate: {{ node.estimated_effort }}</span>{% endif %}
   </div>

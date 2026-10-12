@@ -1,11 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
-from .forms import AwardForm, ProgramForm, VersionForm, unique_slug
+from accounts import services as account_services
+from accounts.services import AccountError
+from . import services as program_services
+from .forms import AwardForm, ProgramForm, SharingForm, VersionForm, unique_slug
 from requirements import services
 from requirements.models import RequirementNode
 
@@ -25,7 +29,7 @@ def personal_owner():
 @login_required
 def catalog(request):
     q = request.GET.get("q", "").strip()[:MAX_QUERY]
-    awards, text_hits = search_awards(q)
+    awards, text_hits = search_awards(q, request.user)
     programs = {}
     for award in awards:
         programs.setdefault(award.program, []).append(award)
@@ -36,7 +40,7 @@ def catalog(request):
             ]
     empty_programs = []
     if not q:
-        empty_programs = list(Program.objects.exclude(pk__in=[p.pk for p in programs]))
+        empty_programs = list(program_services.visible_programs(request.user).exclude(pk__in=[p.pk for p in programs]))
     cov = {c.program_id: c for c in coverage_for_programs(list(programs) + empty_programs)}
     for p in list(programs) + empty_programs:
         p.coverage = cov[p.pk]
@@ -51,8 +55,37 @@ def catalog(request):
 @login_required
 def program_detail(request, pk):
     program = get_object_or_404(Program.objects.select_related("owner"), pk=pk)
+    program_services.require_view(request.user, program)
     awards = program.awards.prefetch_related("versions")
-    return render(request, "catalog/program_detail.html", {"program": program, "awards": awards, "coverage": program_coverage(program)})
+    can_share = program_services.can_share(request.user, program)
+    context = {
+        "program": program, "awards": awards, "coverage": program_coverage(program),
+        "can_edit": program_services.can_edit(request.user, program), "can_share": can_share,
+    }
+    if can_share:
+        context["sharing_form"] = SharingForm(program=program)
+    return render(request, "catalog/program_detail.html", context)
+
+
+@login_required
+@require_POST
+def program_sharing(request, pk):
+    program = get_object_or_404(Program, pk=pk)
+    program_services.require_view(request.user, program)
+    if not program_services.can_share(request.user, program):
+        raise PermissionDenied("Only an admin can change sharing.")
+    form = SharingForm(request.POST, program=program)
+    if form.is_valid():
+        try:
+            program_services.set_visibility(
+                request.user, program, form.cleaned_data["visibility"], form.cleaned_data["users"]
+            )
+            messages.success(request, "Sharing saved.")
+        except AccountError as exc:
+            messages.error(request, str(exc))
+    else:
+        messages.error(request, "Sharing was not saved. Check the choices and try again.")
+    return redirect("program_detail", pk=program.pk)
 
 
 @login_required
@@ -64,6 +97,8 @@ def program_create(request):
         program = form.save(commit=False)
         program.owner = owner
         program.is_custom = True
+        program.created_by = request.user
+        program.visibility = Program.Visibility.PRIVATE
         program.status = Program.Status.ACTIVE
         program.slug = unique_slug(Program.objects.filter(owner=owner), program.name, "program")
         program.save()
@@ -76,6 +111,7 @@ def program_create(request):
 @require_http_methods(["GET", "POST"])
 def award_create(request, pk):
     program = get_object_or_404(Program, pk=pk)
+    program_services.require_edit(request.user, program)
     form = AwardForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         award = form.save(commit=False)
@@ -94,6 +130,7 @@ def award_create(request, pk):
 @login_required
 def award_detail(request, pk):
     award = get_object_or_404(Award.objects.select_related("program"), pk=pk)
+    program_services.require_view(request.user, award.program)
     versions = list(award.versions.all())
     for v in versions:
         v.source_urls = sorted(
@@ -108,14 +145,16 @@ def award_detail(request, pk):
     return render(
         request,
         "catalog/award_detail.html",
-        {"award": award, "versions": versions, "current": current, "tree": tree},
+        {"award": award, "versions": versions, "current": current, "tree": tree,
+         "can_edit": program_services.can_edit(request.user, award.program)},
     )
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def version_create(request, pk):
-    award = get_object_or_404(Award, pk=pk)
+    award = get_object_or_404(Award.objects.select_related("program"), pk=pk)
+    program_services.require_edit(request.user, award.program)
     form = VersionForm(request.POST or None, award=award, initial={"version_label": "v1"})
     if request.method == "POST" and form.is_valid():
         with transaction.atomic():

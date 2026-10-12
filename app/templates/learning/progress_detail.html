@@ -4,6 +4,10 @@
 {% block content %}
 <p><a href="{% url 'plan_detail' plan.pk %}">{{ plan.title }}</a>{% if parent_progress_id %} / <a href="{% url 'progress_detail' parent_progress_id %}">{{ node.parent.display_number|default:"parent" }}</a>{% endif %}</p>
 <h1>Requirement {{ node.display_number }}</h1>
+{% if can_check %}
+<p class="flex flex-wrap items-center gap-2">Status: <span class="badge badge-outline">{{ progress.get_status_display }}</span>
+{% include "learning/_mark_controls.html" with next="requirement" %}</p>
+{% endif %}
 <div class="vstack">
   {% if not plan_open %}<p class="note note-warning">This plan is {{ plan.get_status_display|lower }}. You can read it, but not change it.</p>{% endif %}
   {% if plan.status != 'active' and plan_open %}<p class="note note-warning">This plan is {{ plan.get_status_display|lower }}. Start or resume it to change the status.</p>{% endif %}
@@ -13,8 +17,7 @@
     <blockquote class="req-text">{{ node.text|linebreaksbr }}</blockquote>
     <p>
       {% if node.text_origin == 'official_source' %}<span class="badge badge-outline badge-success">Official text</span>
-      {% else %}<span class="badge badge-outline">Not official text: {{ node.get_text_origin_display|lower }}</span>{% endif %}
-      {% if node.source %}Source: {{ node.source.title }} ({{ node.source.get_review_status_display|lower }}).{% endif %}
+      {% if node.source %}Source: {{ node.source.title }} ({{ node.source.get_review_status_display|lower }}).{% endif %}{% endif %}
       Version {{ version.version_label }}, content review: {{ version.get_source_status_display|lower }}.
     </p>
     {% if node.completion_logic != 'single' %}<p class="logic">{{ node|logic_label }}</p>{% endif %}
@@ -40,7 +43,7 @@
     {% if leaf %}
     <p><strong>What the requirement asks you to do:</strong></p>
     {% for tag, text in guidance %}
-      <p>{% if tag %}<span class="badge badge-outline">{{ tag|capfirst }}</span> {% endif %}{{ text }}</p>
+      <p>{{ text }}</p>
     {% endfor %}
     <p>These prompts help you. They do not add anything to the requirement text.</p>
     {% if counting_types %}<p>Evidence types that support this requirement: {{ counting_types|join:", " }}.</p>{% endif %}

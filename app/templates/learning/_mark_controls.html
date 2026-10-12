@@ -1,0 +1,11 @@
+{# Mark done / Undo. Needs: progress, next ("plan" or "requirement"). Works without JavaScript. #}
+<form method="post" action="{% url 'progress_check' progress.pk %}" class="inline">{% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  {% if progress.status == 'personally_completed' %}
+  <input type="hidden" name="do" value="undo">
+  <button type="submit" class="btn btn-outline btn-sm" aria-label="Undo done for requirement {{ progress.requirement_node.display_number }}">Undo</button>
+  {% else %}
+  <input type="hidden" name="do" value="done">
+  <button type="submit" class="btn btn-primary btn-sm" aria-label="Mark requirement {{ progress.requirement_node.display_number }} done">Mark done</button>
+  {% endif %}
+</form>

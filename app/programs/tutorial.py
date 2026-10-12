@@ -8,7 +8,7 @@ Change the text only by adding a new LABEL. A published version is never edited.
 OWNER_SLUG = "merit-badge-project"
 PROGRAM_SLUG = "merit-badge-help"
 AWARD_SLUG = "how-to-use-merit-badge"
-LABEL = "1.0"
+LABEL = "1.1"
 PROJECT_URL = "https://github.com/snachodog/merit_badge"
 
 UNOFFICIAL = (
@@ -32,10 +32,11 @@ def _step(number, text, tags, evidence=(), effort="2 minutes"):
     return node
 
 
-def tutorial_data():
+def tutorial_data(label=None):
+    label = label or LABEL
     return {
         "schema_version": "1.0",
-        "import_key": f"{OWNER_SLUG}/{PROGRAM_SLUG}/{AWARD_SLUG}/{LABEL}",
+        "import_key": f"{OWNER_SLUG}/{PROGRAM_SLUG}/{AWARD_SLUG}/{label}",
         "program": {
             "slug": PROGRAM_SLUG,
             "name": "Merit Badge help",
@@ -60,10 +61,10 @@ def tutorial_data():
             "category": "Tutorial",
         },
         "version": {
-            "label": LABEL,
+            "label": label,
             "source_status": "user_authored",
             "rights_status": "user_authored",
-            "change_summary": "First version of the project tutorial.",
+            "change_summary": "Step 5 mentions the checklist. Step 10 no longer says what the app cannot share.",
         },
         "sources": [
             {
@@ -81,11 +82,11 @@ def tutorial_data():
             _step("2", "Open any published award, then choose Start plan. A plan is your private copy of the work. It starts in the planned state; choose Start to make it active.", ["plan"]),
             _step("3", "Open one requirement from your plan. Read its text, its action tags and its guidance. Reading a requirement never completes it.", ["read"]),
             _step("4", "On a requirement page, write a short note about what you did or learned. Add evidence if you have some, such as a photo, a file, a link or a time log.", ["record", "log"], ["a short note", "a photo or file", "a time log entry"]),
-            _step("5", "Mark a requirement done. The app only lets you do this when you have followed its rules, and it tells you what is missing if you have not.", ["reflect"]),
+            _step("5", "Mark a requirement done. Use the checklist on your plan page: choose Mark done next to a requirement, or Undo to take it back. The app only lets you do this when you have followed its rules, and it tells you what is missing if you have not.", ["reflect"]),
             _step("6", "Pause a plan and resume it. Use the plan page actions. Your notes and evidence stay as they are.", ["other"]),
             _step("7", "Complete a plan. When every required step is done, the plan page offers Record personal completion. The app checks the requirement logic before it allows this.", ["plan"]),
             _step("8", "Open Achievements. Find your personal record and its unofficial certificate. Print it with your browser if you like.", ["identify"]),
             _step("9", "Open Settings and download your data export. Keep a copy somewhere safe, because this app runs on your own server.", ["record"], ["the export file name and date"]),
-            _step("10", f"Share Merit Badge with a friend. Send them the project page, {PROJECT_URL}, and point them to the self-hosting guide: the README and sample.docker-compose.yaml in that project. Merit Badge has no in-app sharing, invites, or accounts for others.", ["plan"]),
+            _step("10", f"Share Merit Badge with a friend. Send them the project page, {PROJECT_URL}, and point them to the self-hosting guide: the README and sample.docker-compose.yaml in that project. Or ask your administrator for an invitation link.", ["plan"]),
         ],
     }

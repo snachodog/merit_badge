@@ -9,7 +9,7 @@ from django.db.models import Q
 
 from requirements.models import RequirementNode
 
-from .models import Award
+from .models import Award, Program
 
 MAX_QUERY = 200
 
@@ -25,9 +25,11 @@ def matching_nodes(q):
     ).filter(Q(sv=_query(q)) | Q(text__icontains=q))
 
 
-def search_awards(q):
+def search_awards(q, user):
     """Return (awards queryset, set of version ids whose requirement text matched)."""
-    awards = Award.objects.select_related("program", "program__owner").prefetch_related("versions")
+    awards = Award.objects.filter(
+        program__in=Program.objects.visible_to(user)
+    ).select_related("program", "program__owner").prefetch_related("versions")
     q = (q or "").strip()[:MAX_QUERY]
     if not q:
         return awards.order_by("program__name", "name"), set()

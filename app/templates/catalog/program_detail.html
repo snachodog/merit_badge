@@ -9,5 +9,15 @@
 {% if program.catalog_source_url %}<p>Catalog source: <a href="{{ program.catalog_source_url }}" rel="noopener noreferrer">{{ program.catalog_source_url }}</a></p>{% endif %}
 <h2>Awards</h2>
 <ul>{% for award in awards %}<li><a href="{% url 'award_detail' award.pk %}">{{ award.name }}</a> ({{ award.versions.all|length }} version{{ award.versions.all|length|pluralize }})</li>{% empty %}<li>No awards yet.</li>{% endfor %}</ul>
-<p><a class="btn btn-primary" href="{% url 'award_create' program.pk %}">Add an award</a></p>
+{% if can_edit %}<p><a class="btn btn-primary" href="{% url 'award_create' program.pk %}">Add an award</a></p>{% endif %}
+{% if can_share %}
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="share-h">
+  <h2 id="share-h">Sharing</h2>
+  <p>Now: {{ program.get_visibility_display }}. Only admins change sharing. People you share with can read the program and start their own plans. They cannot edit it.</p>
+  <form method="post" action="{% url 'program_sharing' program.pk %}">{% csrf_token %}
+    {% include "catalog/_form_fields.html" with form=sharing_form %}
+    <button type="submit" class="btn btn-primary">Save sharing</button>
+  </form>
+</section>
+{% endif %}
 {% endblock %}

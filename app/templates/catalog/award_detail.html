@@ -21,10 +21,10 @@
       <td>{{ v.get_source_status_display }}</td>
       <td>{{ v.get_rights_status_display }}</td>
       <td>{% for u in v.source_urls %}<a href="{{ u }}" rel="noopener noreferrer">{{ u }}</a>{% if not forloop.last %}<br>{% endif %}{% empty %}None cited{% endfor %}</td>
-      <td><a href="{% url 'version_edit' v.pk %}">{% if v.status == 'draft' %}Edit{% else %}Manage{% endif %}</a>{% if v.status == 'draft' or v.status == 'review' %} · <a href="{% url 'version_delete' v.pk %}">Delete</a>{% endif %}</td>
+      <td>{% if can_edit %}<a href="{% url 'version_edit' v.pk %}">{% if v.status == 'draft' %}Edit{% else %}Manage{% endif %}</a>{% if v.status == 'draft' or v.status == 'review' %} · <a href="{% url 'version_delete' v.pk %}">Delete</a>{% endif %}{% endif %}</td>
     </tr>
   {% empty %}<tr><td colspan="6">No versions yet.</td></tr>{% endfor %}
   </tbody>
 </table></div>
-<p><a class="btn btn-primary" href="{% url 'version_create' award.pk %}">Add a draft version</a></p>
+{% if can_edit %}<p><a class="btn btn-primary" href="{% url 'version_create' award.pk %}">Add a draft version</a></p>{% endif %}
 {% endblock %}

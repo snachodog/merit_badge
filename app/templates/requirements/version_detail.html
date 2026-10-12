@@ -14,6 +14,6 @@
   <p class="actions"><a class="btn btn-primary" href="{% url 'plan_start' version.pk %}">Start plan</a>
   <span>Review the requirements first. Starting a plan pins it to this version.</span></p>
   {% endif %}
-  <p><a href="{% url 'version_edit' version.pk %}">{% if version.status == 'draft' %}Edit this draft{% else %}Manage this version{% endif %}</a></p>
+  {% if can_edit %}<p><a href="{% url 'version_edit' version.pk %}">{% if version.status == 'draft' %}Edit this draft{% else %}Manage this version{% endif %}</a></p>{% endif %}
 </div>
 {% endblock %}
