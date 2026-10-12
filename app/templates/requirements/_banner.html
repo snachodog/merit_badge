@@ -11,7 +11,4 @@
       {% if version.change_summary %}<tr><th scope="row">Change summary</th><td>{{ version.change_summary }}</td></tr>{% endif %}
     </tbody>
   </table></div>
-  {% if version.source_status != 'verified' and version.source_status != 'user_authored' %}
-  <p class="note note-warning">This content is <strong>{{ version.get_source_status_display|lower }}</strong>. Check the wording against its source before relying on it.</p>
-  {% endif %}
 </section>

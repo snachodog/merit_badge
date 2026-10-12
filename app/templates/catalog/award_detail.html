@@ -7,7 +7,6 @@
 {% if award.eligibility_notes %}<p><strong>Eligibility notes:</strong> {{ award.eligibility_notes }}</p>{% endif %}
 {% if current %}
 <h2>Requirements <span class="text-base font-normal">(version {{ current.version_label }}, {{ current.get_status_display|lower }})</span></h2>
-{% if current.source_status != 'verified' and current.source_status != 'user_authored' %}<p class="note note-warning">This content is <strong>{{ current.get_source_status_display|lower }}</strong>. Check the wording against its source before relying on it.</p>{% endif %}
 {% if tree %}<ol class="req-tree">{% for item in tree %}{% include "requirements/_node.html" with item=item %}{% endfor %}</ol>
 {% else %}<p>This version has no requirements yet.</p>{% endif %}
 {% endif %}
