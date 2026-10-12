@@ -1191,14 +1191,25 @@ Owner-requested addition. It ships before Phase 4.
 - An idempotent management command seeds it (for example `seed_tutorial`). The first-run home page links to it.
 - Authored by this project in plain language (ISO 24495-1). It contains no Scouting America text.
 - Marked clearly as unofficial, with source and rights metadata like any other entry.
+- A step that explains how to share Merit Badge with a friend. Sharing means pointing a friend to the project page and the self-hosting guide (`sample.docker-compose.yaml`, README). The app adds no accounts, invites, profiles, or in-app sharing, because §0.2 forbids community features.
+- An optional second template, a historical entry based on Robert Baden-Powell's original criteria (*Scouting for Boys*, 1908). It ships only after the rights check below passes.
 
 **Exit criteria**
 
 - A new user can finish the tutorial plan using only the app.
+- Finishing the tutorial creates a personal Achievement record and its unofficial certificate, so a new user sees the full flow once.
 - Completion comes from the requirement logic, like any other plan.
 - The seed command is safe to run twice and never overwrites a learner's progress.
 - The tutorial is not counted toward Scouting catalog coverage.
 - Tests cover the seed command, the plan flow, and the coverage exclusion.
+
+**Baden-Powell rights check (before any text ships)**
+
+- Use the 1908 first edition, not a modern edition, annotated edition, or translation. Later editions and translations may carry their own copyright.
+- Baden-Powell died in 1941. Confirm the public-domain status for the 1908 text in the countries you care about, and record the result in an ADR.
+- Take the text from a source that states its edition, such as Project Gutenberg. Record the source URL, edition, and checked date in SourceRecord.
+- Reproduce the text exactly. Mark the entry "historical, not an official Scouting America requirement".
+- The owner picks which criteria to include. Ask before choosing.
 
 ## Phase 4: AI tutoring and EDGE instruction
 
