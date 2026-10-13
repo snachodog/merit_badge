@@ -1,6 +1,6 @@
 # Personal data export format
 
-Version 1.0. Source: `app/config/core/export.py`. Download from **Settings**.
+Version 1.1. Source: `app/config/core/export.py`. Download from **Settings**.
 
 The export has two files. Both hold only the signed-in account's data.
 
@@ -16,11 +16,12 @@ All timestamps are ISO 8601. Missing values are `null`. The file is UTF-8.
 Top-level fields:
 
 - `format`: always `merit-badge-personal-export`.
-- `format_version`: `"1.0"`. The major number changes if a field is removed or renamed.
+- `format_version`: `"1.1"`. The major number changes if a field is removed or renamed.
 - `exported_at`, `app_name`, `notice`.
 - `account`: `username`, `display_name`.
 - `learning_plans`: list of plans (below).
 - `achievements`: list of achievement records (below).
+- `tutoring_sessions`: AI practice sessions you chose to keep. Fields: `id`, `learning_plan_id`, `requirement_id`, `mode`, `provider_name`, `model_identifier`, `started_at`, `ended_at`, `summary`, `source_references`, `transcript` (null unless you kept it), and `is_evidence` (always false). Added in 1.1.
 
 ### Learning plan
 

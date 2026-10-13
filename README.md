@@ -180,6 +180,10 @@ services:
       OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
       OIDC_ENABLED: ${OIDC_ENABLED:-false}
+      AI_ENABLED: ${AI_ENABLED:-false}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
     volumes:
       - media:/data/media          # evidence uploads: back this up with the database
     networks: [backend, frontend]
@@ -243,6 +247,31 @@ You can pre-fill the first settings with `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `O
 The client secret is stored encrypted. The key comes from `DJANGO_SECRET_KEY`. The secret is never shown again. A blank secret field keeps the current one.
 
 If you change `DJANGO_SECRET_KEY`, the stored secret cannot be read. OIDC sign-in turns off until you enter the secret again in Settings > OIDC. Password sign-in is not affected.
+
+## AI tutor (optional)
+
+The AI tutor is off by default. The whole app works without it. When you turn it on, a learner can start a study session from a requirement page. The modes are Discuss, Explain, Practice, Check understanding, Prepare to demonstrate and Review my evidence.
+
+What it will not do:
+
+- It never marks a requirement done, never adds evidence, and never changes a requirement.
+- It does not count as a counselor, a witness or a required person-to-person conversation.
+- Its answers and summaries are labelled "not official". A kept session is not evidence.
+
+To set it up:
+
+1. Run or pick an OpenAI-compatible endpoint, such as Ollama (`http://ollama:11434/v1`), llama.cpp, vLLM or a hosted API. This project ships no model container.
+2. Sign in as an admin. Open **Settings > AI tutor**.
+3. Enter the endpoint URL and model name. Enter an API key if the endpoint needs one. Select **Enable the AI tutor** and save.
+4. Select **Test the endpoint**.
+
+You can pre-fill the first settings with `AI_ENABLED`, `AI_BASE_URL`, `AI_MODEL` and `AI_API_KEY` in `.env`. They apply once. After that, Settings is the source of truth. The key is encrypted with a key derived from `DJANGO_SECRET_KEY`. If you change that secret, enter the key again.
+
+What the model sees: the requirement text, its version, its safety notes, and (in review mode) up to 10 short evidence descriptions. It never sees files, other plans or other users.
+
+Retention: a conversation is held only while a session is open. When you end a session, you can keep the summary, keep the summary and the full conversation, or delete everything. Sessions you leave unkept are deleted after one day. Kept sessions are in your data export.
+
+If the endpoint is down, you see a plain message and nothing else changes.
 
 ## Interface and CSS build
 

@@ -4,6 +4,11 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+### Added
+- Optional AI study helper (Phase 4). Off by default. Admins set an OpenAI-compatible endpoint, model and key in Settings > AI tutor. New `AI_*` variables can pre-fill the settings. See `docs/decisions/0007-ai-tutoring.md`.
+- Six modes on the requirement page: Discuss, Explain, Practice, Check understanding, Prepare to demonstrate, Review my evidence. The helper sees only that requirement and, in review mode, short evidence descriptions.
+- The helper never marks anything done, adds evidence or edits a requirement. Its text is labelled "not official".
+- You choose what to keep when a session ends: the summary, the summary and the conversation, or nothing. Kept sessions are listed under Settings and are in your data export (format 1.1).
 
 ## [0.6.0] - 2026-10-12
 ### Added
