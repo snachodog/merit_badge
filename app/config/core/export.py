@@ -16,9 +16,10 @@ from achievements.services import display_name_for
 from evidence import storage
 from evidence.models import EvidenceRecord
 from learning.models import LearningPlan, RequirementProgress
+from tutoring.models import TutoringSession
 
 FORMAT = "merit-badge-personal-export"
-FORMAT_VERSION = "1.0"
+FORMAT_VERSION = "1.1"
 
 
 def _iso(value):
@@ -80,6 +81,23 @@ def _achievement(record):
         "learner_display_name": record.learner_display_name,
         "issuer_name": record.issuer_name,
         "official": False,
+    }
+
+
+def _tutoring(session):
+    return {
+        "id": session.pk,
+        "learning_plan_id": session.progress.learning_plan_id,
+        "requirement_id": session.progress.requirement_node_id,
+        "mode": session.mode,
+        "provider_name": session.provider_name,
+        "model_identifier": session.model_identifier,
+        "started_at": _iso(session.started_at),
+        "ended_at": _iso(session.ended_at),
+        "summary": session.summary,
+        "source_references": session.source_references,
+        "transcript": session.transcript if session.transcript_saved else None,
+        "is_evidence": False,
     }
 
 
@@ -152,6 +170,7 @@ def build_export(user):
             "achievement_id": achievement.pk if achievement else None,
         })
     records = AchievementRecord.objects.filter(learning_plan__user=user).order_by("pk")
+    kept = TutoringSession.objects.filter(user=user, status=TutoringSession.Status.KEPT).order_by("pk")
     return {
         "format": FORMAT,
         "format_version": FORMAT_VERSION,
@@ -161,6 +180,7 @@ def build_export(user):
         "account": {"username": user.get_username(), "display_name": display_name_for(user)},
         "learning_plans": out_plans,
         "achievements": [_achievement(r) for r in records],
+        "tutoring_sessions": [_tutoring(t) for t in kept],
     }
 
 

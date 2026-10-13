@@ -1,0 +1,13 @@
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="ai-h">
+  <h2 id="ai-h">AI tutor</h2>
+  <p>The tutor is optional and off by default. Point it at an OpenAI-compatible endpoint that you run or choose, such as Ollama or a hosted API. The app works fully without it.</p>
+  <p>When it is on, the model sees only the requirement you are working on, its version, and (in review mode) short evidence descriptions. It never sees files or other plans.</p>
+  <form method="post" action="{% url 'ai_settings' %}" class="max-w-xl">{% csrf_token %}
+    {% include "catalog/_form_fields.html" with form=ai_form %}
+    <button type="submit" class="btn btn-primary mt-3">Save AI settings</button>
+  </form>
+  <form method="post" action="{% url 'ai_test' %}">{% csrf_token %}
+    <button type="submit" class="btn btn-outline">Test the endpoint</button>
+    <span class="helptext">Sends one short test message. Save changes first.</span>
+  </form>
+</section>

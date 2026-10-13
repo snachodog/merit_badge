@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "learning",
     "evidence",
     "achievements",
+    "tutoring",
 ]
 
 MIDDLEWARE = [

@@ -444,7 +444,7 @@ def test_export_contents_and_isolation(logged, plan_setup, other, award, complet
     raw = r.content.decode()
     assert "OTHER-PRIVATE" not in raw and "OTHER-NOTE" not in raw and "secret" not in raw
     data = json.loads(raw)
-    assert data["format_version"] == "1.0" and data["account"]["username"] == "owner"
+    assert data["format_version"] == "1.1" and data["account"]["username"] == "owner"
     plans = {p["id"]: p for p in data["learning_plans"]}
     assert set(plans) == {plan.pk, completed.pk}
     exported = plans[plan.pk]

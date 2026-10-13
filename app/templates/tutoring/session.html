@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Study helper{% endblock %}
+{% block content %}
+<p><a href="{% url 'progress_detail' progress.pk %}">Back to requirement {{ progress.requirement_node.display_number }}</a></p>
+<h1>{{ session.get_mode_display }}</h1>
+<div class="vstack">
+  <p class="note note-warning">This is an AI helper. It is not a counselor and it is not evidence. It can be wrong. It cannot mark this requirement done.</p>
+  <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-2" aria-labelledby="ref-h">
+    <h2 id="ref-h">What the helper was given</h2>
+    <ul>{% for r in session.source_references %}<li>{{ r.label }}</li>{% endfor %}</ul>
+    <blockquote class="req-text">{{ progress.requirement_node.text|linebreaksbr }}</blockquote>
+  </section>
+
+  <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="chat-h">
+    <h2 id="chat-h">Conversation</h2>
+    {% for m in session.transcript %}
+    <div class="chat {% if m.role == 'user' %}chat-end{% else %}chat-start{% endif %}">
+      <div class="chat-header">{% if m.role == 'user' %}You{% else %}AI helper (not official){% endif %}</div>
+      <div class="chat-bubble">{{ m.content|linebreaksbr }}</div>
+    </div>
+    {% empty %}<p>{% if session.status == 'open' %}Say hello or ask your first question.{% else %}The conversation is not saved.{% endif %}</p>{% endfor %}
+
+    {% if session.status == 'open' %}
+      {% if ai_on %}
+      <form method="post" action="{% url 'tutor_session' session.pk %}">{% csrf_token %}
+        {% include "catalog/_form_fields.html" %}
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+      {% else %}<p class="note note-warning">The AI tutor is off. You can end this session.</p>{% endif %}
+      <form method="post" action="{% url 'tutor_end' session.pk %}">{% csrf_token %}
+        <button type="submit" class="btn btn-outline">End session</button>
+      </form>
+    {% endif %}
+  </section>
+
+  {% if session.status == 'ended' %}
+  <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="sum-h">
+    <h2 id="sum-h">Summary</h2>
+    {% if session.summary %}<p><span class="badge badge-outline">Written by AI, not official</span></p><p>{{ session.summary|linebreaksbr }}</p>
+    {% else %}<p>No summary was written.</p>{% endif %}
+    <p>Choose what to keep. Unkept sessions are deleted after one day. A kept session is never counted as evidence.</p>
+    <form method="post" action="{% url 'tutor_keep' session.pk %}" class="flex flex-wrap items-center gap-3">{% csrf_token %}
+      <label class="flex items-center gap-2"><input type="checkbox" name="save_transcript" value="1" class="checkbox"> Also keep the full conversation</label>
+      <button type="submit" class="btn btn-primary">Keep</button>
+    </form>
+    <form method="post" action="{% url 'tutor_discard' session.pk %}">{% csrf_token %}
+      <button type="submit" class="btn btn-outline">Delete this session</button>
+    </form>
+  </section>
+  {% elif session.status == 'kept' %}
+  <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
+    <h2>Summary</h2>
+    {% if session.summary %}<p><span class="badge badge-outline">Written by AI, not official</span></p><p>{{ session.summary|linebreaksbr }}</p>{% else %}<p>No summary was kept.</p>{% endif %}
+    <form method="post" action="{% url 'tutor_discard' session.pk %}">{% csrf_token %}
+      <button type="submit" class="btn btn-outline">Delete this session</button>
+    </form>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

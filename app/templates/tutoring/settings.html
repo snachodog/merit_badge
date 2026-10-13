@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}AI settings{% endblock %}
+{% block content %}
+<h1>AI settings</h1>
+<p><a href="{% url 'settings' %}">Back to Settings</a></p>
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3">
+  <form method="post" action="{% url 'ai_settings' %}" class="max-w-xl">{% csrf_token %}
+    {% include "catalog/_form_fields.html" with form=ai_form %}
+    <button type="submit" class="btn btn-primary mt-3">Save AI settings</button>
+  </form>
+</section>
+{% endblock %}

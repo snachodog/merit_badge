@@ -1,0 +1,16 @@
+{% if available %}
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="tutor-h">
+  <h2 id="tutor-h">AI study helper</h2>
+  <p><span class="badge badge-outline">Optional, not official</span></p>
+  <p>Practice with an AI helper. It can explain, quiz you and help you prepare. It cannot see what you do, it can make mistakes, and it never marks anything done. If the requirement names a person, the helper does not replace that person.</p>
+  <form method="post" action="{% url 'tutor_start' progress.pk %}" class="flex flex-wrap items-end gap-2">{% csrf_token %}
+    <label class="form-control">
+      <span class="label-text">Mode</span>
+      <select name="mode" class="select select-bordered">
+        {% for value, label in modes %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+      </select>
+    </label>
+    <button type="submit" class="btn btn-primary">Start a session</button>
+  </form>
+</section>
+{% endif %}

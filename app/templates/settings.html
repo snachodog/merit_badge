@@ -21,6 +21,10 @@
     <p><a class="btn btn-primary" href="{% url 'export_evidence_zip' %}">Download evidence files (zip)</a></p>
     <p>Both files may hold private details. Store them somewhere safe.</p>
   </section>
+  <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="tut-h">
+    <h2 id="tut-h">Tutor sessions</h2>
+    <p><a href="{% url 'tutor_list' %}">Kept AI tutor sessions</a>. You can delete any of them there.</p>
+  </section>
   <section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-3" aria-labelledby="del-h">
     <h2 id="del-h">Delete your data</h2>
     <p>This is not built yet. To remove one piece of evidence, use its Delete link on the requirement page.</p>
@@ -29,6 +33,7 @@
   {% include "settings/_users.html" %}
   {% include "settings/_invitations.html" %}
   {% include "settings/_oidc.html" %}
+  {% load tutoring_tags %}{% ai_admin_section %}
   {% endif %}
 </div>
 {% endblock %}

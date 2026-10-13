@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Kept tutor sessions{% endblock %}
+{% block content %}
+<h1>Kept tutor sessions</h1>
+<p><a href="{% url 'settings' %}">Back to Settings</a></p>
+<p>These are AI practice sessions you chose to keep. They are not evidence and do not count toward any requirement.</p>
+{% for s in sessions %}
+<section class="card card-body bg-base-100 border border-base-300 shadow-sm gap-2 mb-3">
+  <h2><a href="{% url 'tutor_session' s.pk %}">{{ s.get_mode_display }}: requirement {{ s.progress.requirement_node.display_number }}</a></h2>
+  <p>{{ s.progress.learning_plan.title }}, {{ s.started_at|date:"Y-m-d" }}{% if s.transcript_saved %}, full conversation kept{% endif %}</p>
+  {% if s.summary %}<p>{{ s.summary|truncatewords:40 }}</p>{% endif %}
+</section>
+{% empty %}<p>You have no kept sessions.</p>{% endfor %}
+{% endblock %}
