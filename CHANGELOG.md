@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+## [0.7.0] - 2026-10-14
 ### Added
 - Optional AI study helper (Phase 4). Off by default. Admins set an OpenAI-compatible endpoint, model and key in Settings > AI tutor. New `AI_*` variables can pre-fill the settings. See `docs/decisions/0007-ai-tutoring.md`.
 - Six modes on the requirement page: Discuss, Explain, Practice, Check understanding, Prepare to demonstrate, Review my evidence. The helper sees only that requirement and, in review mode, short evidence descriptions.
